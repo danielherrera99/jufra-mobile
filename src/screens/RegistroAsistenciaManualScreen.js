@@ -166,17 +166,18 @@ const RegistroAsistenciaManualScreen = ({ navigation }) => {
                 />
 
                 <Text style={styles.label}>Invitados (Sin cuenta):</Text>
-                <View style={{ flexDirection: 'row', gap: 10 }}>
+                <View style={{ flexDirection: 'row', gap: 10, alignItems: 'flex-start' }}>
                     <View style={{ flex: 1 }}>
                         <Input
                             placeholder="Nombre del invitado..."
                             value={nombreInvitado}
                             onChangeText={setNombreInvitado}
+                            style={{ marginBottom: 0 }}
                         />
                     </View>
                     <TouchableOpacity 
                         onPress={agregarInvitado}
-                        style={{ background: COLORS.secondary, paddingHorizontal: 15, borderRadius: BORDER_RADIUS.md, height: 50, justifyContent: 'center' }}
+                        style={{ backgroundColor: COLORS.secondary, paddingHorizontal: 15, borderRadius: BORDER_RADIUS.md, height: 50, justifyContent: 'center' }}
                     >
                         <Text style={{ color: 'white', fontWeight: 'bold' }}>Añadir</Text>
                     </TouchableOpacity>
