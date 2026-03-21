@@ -145,6 +145,19 @@ const RegistroAsistenciaManualScreen = ({ navigation }) => {
                     </Picker>
                 </View>
 
+                <Text style={styles.label}>Estado de Asistencia:</Text>
+                <View style={styles.pickerContainer}>
+                    <Picker
+                        selectedValue={estadoAsistencia}
+                        onValueChange={(v) => setEstadoAsistencia(v)}
+                    >
+                        <Picker.Item label="Presente" value="presente" />
+                        <Picker.Item label="Falta" value="falta" />
+                        <Picker.Item label="Permiso" value="permiso" />
+                        <Picker.Item label="Tardanza" value="tardanza" />
+                    </Picker>
+                </View>
+
                 <Input
                     placeholder="Buscar hermano..."
                     value={busqueda}
