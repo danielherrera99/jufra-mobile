@@ -1,8 +1,13 @@
 {
   "expo": {
-    "name": "jufra-mobile",
+    "name": "JUFRA APP",
     "slug": "jufra-mobile",
     "version": "1.0.0",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -20,10 +25,16 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.herrera99.juframobile"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "114bd9cc-ffdc-4ccc-96d8-2221f4a275d8"
+      }
     }
   }
 }
