@@ -22,6 +22,14 @@ const MapaScreen = ({ navigation, route }) => {
     const [errorMsg, setErrorMsg] = useState(null);
     const [initialRegion, setInitialRegion] = useState(null);
 
+    const getValidCoordinate = (ubicacion) => {
+        if (!ubicacion || ubicacion.lat == null || ubicacion.lng == null) return null;
+        const lat = parseFloat(ubicacion.lat);
+        const lng = parseFloat(ubicacion.lng);
+        if (isNaN(lat) || isNaN(lng)) return null;
+        return { latitude: lat, longitude: lng };
+    };
+
     useEffect(() => {
         (async () => {
             try {
@@ -40,12 +48,23 @@ const MapaScreen = ({ navigation, route }) => {
                 setLocation(coords);
 
                 if (route.params?.focusOn) {
-                    setInitialRegion({
-                        latitude: route.params.focusOn.latitude,
-                        longitude: route.params.focusOn.longitude,
-                        latitudeDelta: 0.01,
-                        longitudeDelta: 0.01,
-                    });
+                    const focusLat = parseFloat(route.params.focusOn.latitude);
+                    const focusLng = parseFloat(route.params.focusOn.longitude);
+                    if (!isNaN(focusLat) && !isNaN(focusLng)) {
+                        setInitialRegion({
+                            latitude: focusLat,
+                            longitude: focusLng,
+                            latitudeDelta: 0.01,
+                            longitudeDelta: 0.01,
+                        });
+                    } else {
+                        setInitialRegion({
+                            latitude: coords.latitude,
+                            longitude: coords.longitude,
+                            latitudeDelta: 0.0922,
+                            longitudeDelta: 0.0421,
+                        });
+                    }
                 } else {
                     setInitialRegion({
                         latitude: coords.latitude,
@@ -131,14 +150,12 @@ const MapaScreen = ({ navigation, route }) => {
 
                             {/* Marcadores de eventos */}
                             {eventos.map((evento) => {
-                                if (evento.ubicacion && evento.ubicacion.lat && evento.ubicacion.lng) {
+                                const coord = getValidCoordinate(evento.ubicacion);
+                                if (coord) {
                                     return (
                                         <Marker
                                             key={`evento-${evento._id}`}
-                                            coordinate={{
-                                                latitude: evento.ubicacion.lat,
-                                                longitude: evento.ubicacion.lng,
-                                            }}
+                                            coordinate={coord}
                                             title={`📅 ${evento.titulo}`}
                                             description={evento.lugar}
                                             pinColor={COLORS.secondary}
@@ -151,14 +168,12 @@ const MapaScreen = ({ navigation, route }) => {
 
                             {/* Marcadores de anuncios */}
                             {anuncios.map((anuncio) => {
-                                if (anuncio.ubicacion && anuncio.ubicacion.lat && anuncio.ubicacion.lng) {
+                                const coord = getValidCoordinate(anuncio.ubicacion);
+                                if (coord) {
                                     return (
                                         <Marker
                                             key={`anuncio-${anuncio._id}`}
-                                            coordinate={{
-                                                latitude: anuncio.ubicacion.lat,
-                                                longitude: anuncio.ubicacion.lng,
-                                            }}
+                                            coordinate={coord}
                                             title={`📢 ${anuncio.titulo}`}
                                             description={anuncio.tipo}
                                             pinColor={COLORS.tertiary}
@@ -171,14 +186,12 @@ const MapaScreen = ({ navigation, route }) => {
 
                             {/* Marcadores de servicios */}
                             {servicios.map((servicio) => {
-                                if (servicio.ubicacion && servicio.ubicacion.lat && servicio.ubicacion.lng) {
+                                const coord = getValidCoordinate(servicio.ubicacion);
+                                if (coord) {
                                     return (
                                         <Marker
                                             key={`servicio-${servicio._id}`}
-                                            coordinate={{
-                                                latitude: servicio.ubicacion.lat,
-                                                longitude: servicio.ubicacion.lng,
-                                            }}
+                                            coordinate={coord}
                                             title={`🤲 ${servicio.titulo}`}
                                             description={servicio.lugar}
                                             pinColor={'#4CAF50'} // Green for service
