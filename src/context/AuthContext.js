@@ -1,11 +1,11 @@
 import React, { createContext, useState, useContext, useEffect, useRef } from 'react';
-import { PanResponder, View } from 'react-native';
+import { PanResponder, View, AppState } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../config/api';
 
 const AuthContext = createContext({});
 
-const INACTIVITY_TIME = 5 * 60 * 1000; // 5 minutos de inactividad
+const INACTIVITY_TIME = 3 * 60 * 1000; // 3 minutos de inactividad
 
 export const AuthProvider = ({ children }) => {
     const [usuario, setUsuario] = useState(null);
@@ -15,12 +15,15 @@ export const AuthProvider = ({ children }) => {
 
     // Timer para inactividad
     const timerRef = useRef(null);
+    const appState = useRef(AppState.currentState);
+    const lastActiveTime = useRef(Date.now());
 
     const resetTimer = () => {
+        lastActiveTime.current = Date.now();
         if (timerRef.current) clearTimeout(timerRef.current);
         if (token) {
             timerRef.current = setTimeout(() => {
-                console.log("Cerrando sesión por inactividad...");
+                console.log("Cerrando sesión por inactividad en foreground...");
                 logout();
             }, INACTIVITY_TIME);
         }
@@ -46,8 +49,25 @@ export const AuthProvider = ({ children }) => {
         } else {
             if (timerRef.current) clearTimeout(timerRef.current);
         }
+
+        const subscription = AppState.addEventListener('change', nextAppState => {
+            if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
+                const timeElapsed = Date.now() - lastActiveTime.current;
+                if (token && timeElapsed >= INACTIVITY_TIME) {
+                    console.log("Cerrando sesión por inactividad al regresar del background...");
+                    logout();
+                } else {
+                    resetTimer();
+                }
+            } else if (nextAppState.match(/inactive|background/)) {
+                lastActiveTime.current = Date.now();
+            }
+            appState.current = nextAppState;
+        });
+
         return () => {
             if (timerRef.current) clearTimeout(timerRef.current);
+            subscription.remove();
         };
     }, [token]);
 
