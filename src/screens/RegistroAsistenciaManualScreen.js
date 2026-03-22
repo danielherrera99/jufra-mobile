@@ -134,27 +134,31 @@ const RegistroAsistenciaManualScreen = ({ navigation }) => {
                 <Text style={styles.label}>Tipo de Reunión:</Text>
                 <View style={styles.pickerContainer}>
                     <Picker
+                        style={{ color: '#1A1A1A' }}
+                        dropdownIconColor="#424242"
                         selectedValue={tipoReunion}
                         onValueChange={(v) => setTipoReunion(v)}
                     >
-                        <Picker.Item label="Semanal" value="semanal" />
-                        <Picker.Item label="Consejo" value="consejo" />
-                        <Picker.Item label="Formación" value="formacion" />
-                        <Picker.Item label="Apostolado" value="apostolado" />
-                        <Picker.Item label="Especial" value="especial" />
+                        <Picker.Item color="#1A1A1A" label="Semanal" value="semanal" />
+                        <Picker.Item color="#1A1A1A" label="Consejo" value="consejo" />
+                        <Picker.Item color="#1A1A1A" label="Formación" value="formacion" />
+                        <Picker.Item color="#1A1A1A" label="Apostolado" value="apostolado" />
+                        <Picker.Item color="#1A1A1A" label="Especial" value="especial" />
                     </Picker>
                 </View>
 
                 <Text style={styles.label}>Estado de Asistencia:</Text>
                 <View style={styles.pickerContainer}>
                     <Picker
+                        style={{ color: '#1A1A1A' }}
+                        dropdownIconColor="#424242"
                         selectedValue={estadoAsistencia}
                         onValueChange={(v) => setEstadoAsistencia(v)}
                     >
-                        <Picker.Item label="Presente" value="presente" />
-                        <Picker.Item label="Falta" value="falta" />
-                        <Picker.Item label="Permiso" value="permiso" />
-                        <Picker.Item label="Tardanza" value="tardanza" />
+                        <Picker.Item color="#1A1A1A" label="Presente" value="presente" />
+                        <Picker.Item color="#1A1A1A" label="Falta" value="falta" />
+                        <Picker.Item color="#1A1A1A" label="Permiso" value="permiso" />
+                        <Picker.Item color="#1A1A1A" label="Tardanza" value="tardanza" />
                     </Picker>
                 </View>
 

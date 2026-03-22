@@ -173,39 +173,45 @@ const CrearAnuncioScreen = ({ navigation, route }) => {
                     <Text style={styles.label}>Tipo de Anuncio</Text>
                     <View style={styles.pickerContainer}>
                         <Picker
+                            style={{ color: '#1A1A1A' }}
+                            dropdownIconColor="#424242"
                             selectedValue={tipo}
                             onValueChange={(itemValue) => setTipo(itemValue)}
                         >
-                            <Picker.Item label="📢 General" value="general" />
-                            <Picker.Item label="🚨 Urgente" value="urgente" />
-                            <Picker.Item label="📅 Evento" value="evento" />
-                            <Picker.Item label="📖 Formación" value="formacion" />
-                            <Picker.Item label="🙏 Apostolado" value="apostolado" />
+                            <Picker.Item color="#1A1A1A" label="📢 General" value="general" />
+                            <Picker.Item color="#1A1A1A" label="🚨 Urgente" value="urgente" />
+                            <Picker.Item color="#1A1A1A" label="📅 Evento" value="evento" />
+                            <Picker.Item color="#1A1A1A" label="📖 Formación" value="formacion" />
+                            <Picker.Item color="#1A1A1A" label="🙏 Apostolado" value="apostolado" />
                         </Picker>
                     </View>
 
                     <Text style={styles.label}>Prioridad</Text>
                     <View style={styles.pickerContainer}>
                         <Picker
+                            style={{ color: '#1A1A1A' }}
+                            dropdownIconColor="#424242"
                             selectedValue={prioridad}
                             onValueChange={(itemValue) => setPrioridad(itemValue)}
                         >
-                            <Picker.Item label="Normal" value="normal" />
-                            <Picker.Item label="Alta" value="alta" />
-                            <Picker.Item label="Baja" value="baja" />
+                            <Picker.Item color="#1A1A1A" label="Normal" value="normal" />
+                            <Picker.Item color="#1A1A1A" label="Alta" value="alta" />
+                            <Picker.Item color="#1A1A1A" label="Baja" value="baja" />
                         </Picker>
                     </View>
 
                     <Text style={styles.label}>Destinatarios</Text>
                     <View style={styles.pickerContainer}>
                         <Picker
+                            style={{ color: '#1A1A1A' }}
+                            dropdownIconColor="#424242"
                             selectedValue={destinatarios}
                             onValueChange={(itemValue) => setDestinatarios(itemValue)}
                         >
-                            <Picker.Item label="Todos" value="todos" />
-                            <Picker.Item label="Consejo" value="consejo" />
-                            <Picker.Item label="Formación" value="formacion" />
-                            <Picker.Item label="Promesados" value="promesados" />
+                            <Picker.Item color="#1A1A1A" label="Todos" value="todos" />
+                            <Picker.Item color="#1A1A1A" label="Consejo" value="consejo" />
+                            <Picker.Item color="#1A1A1A" label="Formación" value="formacion" />
+                            <Picker.Item color="#1A1A1A" label="Promesados" value="promesados" />
                         </Picker>
                     </View>
 

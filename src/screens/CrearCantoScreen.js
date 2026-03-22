@@ -113,17 +113,18 @@ const CrearCantoScreen = ({ navigation }) => {
                         <Picker
                             selectedValue={categoria}
                             onValueChange={(itemValue) => setCategoria(itemValue)}
-                            style={styles.picker}
+                            style={[styles.picker, { color: '#1A1A1A' }]}
+                            dropdownIconColor="#424242"
                         >
-                            <Picker.Item label="Franciscano" value="franciscano" />
-                            <Picker.Item label="Mariano" value="mariano" />
-                            <Picker.Item label="Entrada" value="entrada" />
-                            <Picker.Item label="Ofertorio" value="ofertorio" />
-                            <Picker.Item label="Comunión" value="comunion" />
-                            <Picker.Item label="Salida" value="salida" />
-                            <Picker.Item label="Animación" value="animacion" />
-                            <Picker.Item label="Adoración" value="adoracion" />
-                            <Picker.Item label="Otro" value="otro" />
+                            <Picker.Item color="#1A1A1A" label="Franciscano" value="franciscano" />
+                            <Picker.Item color="#1A1A1A" label="Mariano" value="mariano" />
+                            <Picker.Item color="#1A1A1A" label="Entrada" value="entrada" />
+                            <Picker.Item color="#1A1A1A" label="Ofertorio" value="ofertorio" />
+                            <Picker.Item color="#1A1A1A" label="Comunión" value="comunion" />
+                            <Picker.Item color="#1A1A1A" label="Salida" value="salida" />
+                            <Picker.Item color="#1A1A1A" label="Animación" value="animacion" />
+                            <Picker.Item color="#1A1A1A" label="Adoración" value="adoracion" />
+                            <Picker.Item color="#1A1A1A" label="Otro" value="otro" />
                         </Picker>
                     </View>
 

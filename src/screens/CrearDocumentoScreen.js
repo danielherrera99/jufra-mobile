@@ -123,13 +123,14 @@ const CrearDocumentoScreen = ({ navigation }) => {
                         <Picker
                             selectedValue={tipo}
                             onValueChange={(itemValue) => setTipo(itemValue)}
-                            style={styles.picker}
+                            style={[styles.picker, { color: '#1A1A1A' }]}
+                            dropdownIconColor="#424242"
                         >
-                            <Picker.Item label="Regla" value="regla" />
-                            <Picker.Item label="Constituciones Generales" value="ccgg" />
-                            <Picker.Item label="Estatuto Nacional" value="estatuto" />
-                            <Picker.Item label="Material Formativo" value="formacion" />
-                            <Picker.Item label="Otro" value="otro" />
+                            <Picker.Item color="#1A1A1A" label="Regla" value="regla" />
+                            <Picker.Item color="#1A1A1A" label="Constituciones Generales" value="ccgg" />
+                            <Picker.Item color="#1A1A1A" label="Estatuto Nacional" value="estatuto" />
+                            <Picker.Item color="#1A1A1A" label="Material Formativo" value="formacion" />
+                            <Picker.Item color="#1A1A1A" label="Otro" value="otro" />
                         </Picker>
                     </View>
 

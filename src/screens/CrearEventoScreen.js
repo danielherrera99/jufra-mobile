@@ -155,14 +155,15 @@ const CrearEventoScreen = ({ navigation, route }) => {
                         <Picker
                             selectedValue={tipo}
                             onValueChange={(itemValue) => setTipo(itemValue)}
-                            style={styles.picker}
+                            style={[styles.picker, { color: '#1A1A1A' }]}
+                            dropdownIconColor="#424242"
                         >
-                            <Picker.Item label="Reunión" value="reunion" />
-                            <Picker.Item label="Misa" value="misa" />
-                            <Picker.Item label="Formación" value="formacion" />
-                            <Picker.Item label="Retiro" value="retiro" />
-                            <Picker.Item label="Fraternidad" value="fraternidad" />
-                            <Picker.Item label="Otro" value="otro" />
+                            <Picker.Item color="#1A1A1A" label="Reunión" value="reunion" />
+                            <Picker.Item color="#1A1A1A" label="Misa" value="misa" />
+                            <Picker.Item color="#1A1A1A" label="Formación" value="formacion" />
+                            <Picker.Item color="#1A1A1A" label="Retiro" value="retiro" />
+                            <Picker.Item color="#1A1A1A" label="Fraternidad" value="fraternidad" />
+                            <Picker.Item color="#1A1A1A" label="Otro" value="otro" />
                         </Picker>
                     </View>
 
