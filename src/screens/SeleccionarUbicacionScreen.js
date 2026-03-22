@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     View,
     Text,
@@ -7,7 +7,7 @@ import {
     Dimensions,
     ActivityIndicator
 } from 'react-native';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import { WebView } from 'react-native-webview';
 import * as Location from 'expo-location';
 import { COLORS, SPACING, BORDER_RADIUS, FONT_SIZES } from '../constants/theme';
 
@@ -15,11 +15,13 @@ const SeleccionarUbicacionScreen = ({ navigation, route }) => {
     const [location, setLocation] = useState(null);
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [loading, setLoading] = useState(true);
+    const webviewRef = useRef(null);
 
     useEffect(() => {
         (async () => {
             let { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') {
+                setLocation({ latitude: -12.04318, longitude: -77.02824 }); // Lima Central fallback
                 setLoading(false);
                 return;
             }
@@ -27,28 +29,79 @@ const SeleccionarUbicacionScreen = ({ navigation, route }) => {
             let loc = await Location.getCurrentPositionAsync({});
             setLocation({
                 latitude: loc.coords.latitude,
-                longitude: loc.coords.longitude,
-                latitudeDelta: 0.0922,
-                longitudeDelta: 0.0421,
+                longitude: loc.coords.longitude
             });
             setLoading(false);
         })();
     }, []);
 
-    const handleMapPress = (e) => {
-        setSelectedLocation(e.nativeEvent.coordinate);
+    const handleMessage = (event) => {
+        try {
+            const data = JSON.parse(event.nativeEvent.data);
+            if (data && data.lat && data.lng) {
+                // Leaflet coords
+                setSelectedLocation({
+                    latitude: data.lat,
+                    longitude: data.lng
+                });
+            }
+        } catch (e) {
+            console.error("Error al parsear coordenadas del mapa", e);
+        }
     };
 
     const handleConfirm = () => {
         if (selectedLocation) {
-            // Regresar a la pantalla anterior con las coordenadas
-            // Identificar a qué pantalla regresar (Crear o Editar)
             const screenName = route.params?.returnScreen || 'CrearEvento';
             navigation.navigate(screenName, {
                 pickedLocation: selectedLocation,
                 merge: true
             });
         }
+    };
+
+    const generarHTML = () => {
+        if (!location) return '';
+
+        return `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+            <style>
+                body { margin: 0; padding: 0; background-color: #f5f5f5; }
+                #map { height: 100vh; width: 100vw; }
+                .focus-marker { font-size: 30px; text-align: center; line-height: 30px; }
+            </style>
+        </head>
+        <body>
+            <div id="map"></div>
+            <script>
+                var map = L.map('map').setView([${location.latitude}, ${location.longitude}], 15);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; OpenStreetMap JUFRA'
+                }).addTo(map);
+
+                var iconPin = L.divIcon({className: 'focus-marker', html: '📍', iconSize: [30, 30]});
+                var currentMarker = null;
+
+                map.on('click', function(e) {
+                    if (currentMarker) map.removeLayer(currentMarker);
+                    currentMarker = L.marker(e.latlng, {icon: iconPin}).addTo(map);
+                    
+                    // Enviar coordenadas seleccionadas de vuelta a React Native
+                    window.ReactNativeWebView.postMessage(JSON.stringify({
+                        lat: e.latlng.lat,
+                        lng: e.latlng.lng
+                    }));
+                });
+            </script>
+        </body>
+        </html>
+        `;
     };
 
     return (
@@ -59,21 +112,23 @@ const SeleccionarUbicacionScreen = ({ navigation, route }) => {
                 </View>
             ) : (
                 <>
-                    <MapView
-                        style={styles.map}
-                        provider={PROVIDER_GOOGLE}
-                        initialRegion={location}
-                        onPress={handleMapPress}
-                        showsUserLocation={true}
-                    >
-                        {selectedLocation && (
-                            <Marker coordinate={selectedLocation} />
-                        )}
-                    </MapView>
+                    {location && (
+                        <WebView
+                            ref={webviewRef}
+                            source={{ html: generarHTML() }}
+                            style={styles.map}
+                            javaScriptEnabled={true}
+                            domStorageEnabled={true}
+                            onMessage={handleMessage}
+                            originWhitelist={['*']}
+                        />
+                    )}
 
                     <View style={styles.footer}>
                         <Text style={styles.instruction}>
-                            Toca en el mapa para seleccionar la ubicación
+                            {selectedLocation 
+                                ? "¡Ubicación lista! Confirma abajo."
+                                : "Toca cualquier parte del mapa para marcar"}
                         </Text>
                         <TouchableOpacity
                             style={[

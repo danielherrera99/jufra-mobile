@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     View,
     Text,
@@ -7,7 +7,7 @@ import {
     TouchableOpacity,
     Dimensions
 } from 'react-native';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import { WebView } from 'react-native-webview';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Location from 'expo-location';
 import { COLORS, FONT_SIZES, SPACING, BORDER_RADIUS, SHADOWS } from '../constants/theme';
@@ -21,13 +21,14 @@ const MapaScreen = ({ navigation, route }) => {
     const [loading, setLoading] = useState(true);
     const [errorMsg, setErrorMsg] = useState(null);
     const [initialRegion, setInitialRegion] = useState(null);
+    const webviewRef = useRef(null);
 
     const getValidCoordinate = (ubicacion) => {
         if (!ubicacion || ubicacion.lat == null || ubicacion.lng == null) return null;
         const lat = parseFloat(ubicacion.lat);
         const lng = parseFloat(ubicacion.lng);
         if (isNaN(lat) || isNaN(lng)) return null;
-        return { latitude: lat, longitude: lng };
+        return { lat, lng };
     };
 
     useEffect(() => {
@@ -35,8 +36,8 @@ const MapaScreen = ({ navigation, route }) => {
             try {
                 let { status } = await Location.requestForegroundPermissionsAsync();
                 if (status !== 'granted') {
-                    setErrorMsg('Permiso de ubicación denegado. Actívalo para ver el mapa.');
-                    setLoading(false);
+                    setErrorMsg('Permiso de ubicación denegado. Actívalo para centrar el mapa.');
+                    setInitialRegion({ latitude: -12.04318, longitude: -77.02824 }); // Lima Central fallback
                     return;
                 }
 
@@ -51,31 +52,17 @@ const MapaScreen = ({ navigation, route }) => {
                     const focusLat = parseFloat(route.params.focusOn.latitude);
                     const focusLng = parseFloat(route.params.focusOn.longitude);
                     if (!isNaN(focusLat) && !isNaN(focusLng)) {
-                        setInitialRegion({
-                            latitude: focusLat,
-                            longitude: focusLng,
-                            latitudeDelta: 0.01,
-                            longitudeDelta: 0.01,
-                        });
+                        setInitialRegion({ latitude: focusLat, longitude: focusLng });
                     } else {
-                        setInitialRegion({
-                            latitude: coords.latitude,
-                            longitude: coords.longitude,
-                            latitudeDelta: 0.0922,
-                            longitudeDelta: 0.0421,
-                        });
+                        setInitialRegion({ latitude: coords.latitude, longitude: coords.longitude });
                     }
                 } else {
-                    setInitialRegion({
-                        latitude: coords.latitude,
-                        longitude: coords.longitude,
-                        latitudeDelta: 0.0922,
-                        longitudeDelta: 0.0421,
-                    });
+                    setInitialRegion({ latitude: coords.latitude, longitude: coords.longitude });
                 }
             } catch (error) {
                 console.error('Error al obtener ubicación:', error);
                 setErrorMsg('No se pudo obtener tu ubicación actual.');
+                setInitialRegion({ latitude: -12.04318, longitude: -77.02824 }); // Lima Central fallback
             } finally {
                 cargarDatos();
             }
@@ -106,6 +93,93 @@ const MapaScreen = ({ navigation, route }) => {
         }
     };
 
+    const generarHTML = () => {
+        if (!initialRegion) return '';
+
+        // Marcadores de OpenStreetMap (Leaflet)
+        let markersScript = '';
+
+        // Marcador del usuario
+        if (location) {
+            markersScript += `
+                var userIcon = L.divIcon({className: 'user-marker', html: '📍', iconSize: [30, 30]});
+                var userMarker = L.marker([${location.latitude}, ${location.longitude}], {icon: userIcon}).addTo(map);
+                userMarker.bindPopup("<b>Tu Ubicación</b>");
+            `;
+        }
+
+        // Eventos
+        eventos.forEach((evento) => {
+            const coord = getValidCoordinate(evento.ubicacion);
+            if (coord) {
+                 markersScript += `
+                     var iconEvento = L.divIcon({className: 'evento-marker', html: '📅', iconSize: [25, 25]});
+                     var m = L.marker([${coord.lat}, ${coord.lng}], {icon: iconEvento}).addTo(map);
+                     m.bindPopup("<b>${evento.titulo.replace(/'/g, "\\'")}</b><br>${(evento.lugar || '').replace(/'/g, "\\'")}");
+                 `;
+            }
+        });
+
+        // Anuncios
+        anuncios.forEach((anuncio) => {
+            const coord = getValidCoordinate(anuncio.ubicacion);
+            if (coord) {
+                 markersScript += `
+                     var iconAnuncio = L.divIcon({className: 'anuncio-marker', html: '📢', iconSize: [25, 25]});
+                     var m = L.marker([${coord.lat}, ${coord.lng}], {icon: iconAnuncio}).addTo(map);
+                     m.bindPopup("<b>${anuncio.titulo.replace(/'/g, "\\'")}</b><br>${(anuncio.tipo || '').replace(/'/g, "\\'")}");
+                 `;
+            }
+        });
+
+        // Servicios
+        servicios.forEach((servicio) => {
+            const coord = getValidCoordinate(servicio.ubicacion);
+            if (coord) {
+                 markersScript += `
+                     var iconServicio = L.divIcon({className: 'servicio-marker', html: '🤲', iconSize: [25, 25]});
+                     var m = L.marker([${coord.lat}, ${coord.lng}], {icon: iconServicio}).addTo(map);
+                     m.bindPopup("<b>${servicio.titulo.replace(/'/g, "\\'")}</b><br>${(servicio.lugar || '').replace(/'/g, "\\'")}");
+                 `;
+            }
+        });
+
+        return `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+            <style>
+                body { margin: 0; padding: 0; background-color: #f5f5f5; }
+                #map { height: 100vh; width: 100vw; }
+                .user-marker, .evento-marker, .anuncio-marker, .servicio-marker {
+                    font-size: 24px;
+                    text-align: center;
+                    line-height: 24px;
+                    background: white;
+                    border-radius: 50%;
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+                }
+            </style>
+        </head>
+        <body>
+            <div id="map"></div>
+            <script>
+                var map = L.map('map').setView([${initialRegion.latitude}, ${initialRegion.longitude}], 14);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; OpenStreetMap JUFRA'
+                }).addTo(map);
+
+                ${markersScript}
+            </script>
+        </body>
+        </html>
+        `;
+    };
+
     return (
         <View style={styles.container}>
             <LinearGradient
@@ -123,85 +197,20 @@ const MapaScreen = ({ navigation, route }) => {
             {loading ? (
                 <View style={styles.loadingContainer}>
                     <ActivityIndicator size="large" color={COLORS.primary} />
-                    <Text style={styles.loadingText}>Obteniendo ubicación...</Text>
+                    <Text style={styles.loadingText}>Cargando mapa interactivo...</Text>
                 </View>
             ) : (
                 <View style={styles.mapContainer}>
                     {initialRegion ? (
-                        <MapView
+                        <WebView
+                            ref={webviewRef}
+                            source={{ html: generarHTML() }}
                             style={styles.map}
-                            provider={PROVIDER_GOOGLE}
-                            initialRegion={initialRegion}
-                            showsUserLocation={true}
-                            showsMyLocationButton={true}
-                        >
-                            {/* Marcador de usuario */}
-                            {location && (
-                                <Marker
-                                    coordinate={{
-                                        latitude: location.latitude,
-                                        longitude: location.longitude,
-                                    }}
-                                    title="Tu Ubicación"
-                                    description="Estás aquí"
-                                    pinColor={COLORS.primary}
-                                />
-                            )}
-
-                            {/* Marcadores de eventos */}
-                            {eventos.map((evento) => {
-                                const coord = getValidCoordinate(evento.ubicacion);
-                                if (coord) {
-                                    return (
-                                        <Marker
-                                            key={`evento-${evento._id}`}
-                                            coordinate={coord}
-                                            title={`📅 ${evento.titulo}`}
-                                            description={evento.lugar}
-                                            pinColor={COLORS.secondary}
-                                            onCalloutPress={() => navigation.navigate('Calendario')}
-                                        />
-                                    );
-                                }
-                                return null;
-                            })}
-
-                            {/* Marcadores de anuncios */}
-                            {anuncios.map((anuncio) => {
-                                const coord = getValidCoordinate(anuncio.ubicacion);
-                                if (coord) {
-                                    return (
-                                        <Marker
-                                            key={`anuncio-${anuncio._id}`}
-                                            coordinate={coord}
-                                            title={`📢 ${anuncio.titulo}`}
-                                            description={anuncio.tipo}
-                                            pinColor={COLORS.tertiary}
-                                            onCalloutPress={() => navigation.navigate('DetalleAnuncio', { anuncio })}
-                                        />
-                                    );
-                                }
-                                return null;
-                            })}
-
-                            {/* Marcadores de servicios */}
-                            {servicios.map((servicio) => {
-                                const coord = getValidCoordinate(servicio.ubicacion);
-                                if (coord) {
-                                    return (
-                                        <Marker
-                                            key={`servicio-${servicio._id}`}
-                                            coordinate={coord}
-                                            title={`🤲 ${servicio.titulo}`}
-                                            description={servicio.lugar}
-                                            pinColor={'#4CAF50'} // Green for service
-                                            onCalloutPress={() => navigation.navigate('Servicios')}
-                                        />
-                                    );
-                                }
-                                return null;
-                            })}
-                        </MapView>
+                            javaScriptEnabled={true}
+                            domStorageEnabled={true}
+                            scrollEnabled={false}
+                            originWhitelist={['*']}
+                        />
                     ) : (
                         <View style={styles.errorContainer}>
                             <Text style={styles.errorText}>{errorMsg || 'No se pudo cargar el mapa'}</Text>
@@ -214,62 +223,21 @@ const MapaScreen = ({ navigation, route }) => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: COLORS.cream,
-    },
+    container: { flex: 1, backgroundColor: COLORS.cream },
     header: {
-        paddingTop: 50,
-        paddingBottom: SPACING.lg,
-        paddingHorizontal: SPACING.lg,
-        borderBottomLeftRadius: BORDER_RADIUS.xl,
-        borderBottomRightRadius: BORDER_RADIUS.xl,
-        zIndex: 10,
+        paddingTop: 50, paddingBottom: SPACING.lg, paddingHorizontal: SPACING.lg,
+        borderBottomLeftRadius: BORDER_RADIUS.xl, borderBottomRightRadius: BORDER_RADIUS.xl, zIndex: 10
     },
-    headerContent: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    backButton: {
-        marginRight: SPACING.md,
-    },
-    backIcon: {
-        fontSize: 24,
-        color: COLORS.white,
-    },
-    headerTitle: {
-        fontSize: FONT_SIZES.xl,
-        fontWeight: 'bold',
-        color: COLORS.white,
-    },
-    mapContainer: {
-        flex: 1,
-        overflow: 'hidden',
-    },
-    map: {
-        width: Dimensions.get('window').width,
-        height: Dimensions.get('window').height,
-    },
-    loadingContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    loadingText: {
-        marginTop: SPACING.md,
-        color: COLORS.gray,
-    },
-    errorContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: SPACING.xl,
-    },
-    errorText: {
-        color: COLORS.error,
-        textAlign: 'center',
-        fontSize: FONT_SIZES.md,
-    },
+    headerContent: { flexDirection: 'row', alignItems: 'center' },
+    backButton: { marginRight: SPACING.md },
+    backIcon: { fontSize: 24, color: COLORS.white },
+    headerTitle: { fontSize: FONT_SIZES.xl, fontWeight: 'bold', color: COLORS.white },
+    mapContainer: { flex: 1, overflow: 'hidden' },
+    map: { width: Dimensions.get('window').width, height: Dimensions.get('window').height },
+    loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+    loadingText: { marginTop: SPACING.md, color: COLORS.gray },
+    errorContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: SPACING.xl },
+    errorText: { color: COLORS.error, textAlign: 'center', fontSize: FONT_SIZES.md }
 });
 
 export default MapaScreen;
