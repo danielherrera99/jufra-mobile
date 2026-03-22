@@ -121,6 +121,10 @@ const SeleccionarUbicacionScreen = ({ navigation, route }) => {
                             domStorageEnabled={true}
                             onMessage={handleMessage}
                             originWhitelist={['*']}
+                            userAgent="Mozilla/5.0 (Linux; Android 10; Mobile) JUFRA-App/1.0"
+                            headers={{
+                                'Referer': 'https://jufra-app.com'
+                            }}
                         />
                     )}
 
