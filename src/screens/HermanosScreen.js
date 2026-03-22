@@ -17,6 +17,15 @@ import api from '../config/api';
 import Card from '../components/Card';
 import { COLORS, FONT_SIZES, SPACING, BORDER_RADIUS, SHADOWS } from '../constants/theme';
 import { useFocusEffect } from '@react-navigation/native';
+import { API_URL } from '../config/api';
+
+const getSafeImageUrl = (url) => {
+    if (!url) return null;
+    let safeUrl = String(url).replace('http://localhost:5000', API_URL.replace('/api', '').replace('/api', ''))
+                     .replace('http://127.0.0.1:5000', API_URL.replace('/api', '').replace('/api', ''))
+                     .replace('http://', 'https://');
+    return safeUrl;
+};
 
 const HermanosScreen = ({ navigation }) => {
     const { usuario } = useAuth();
@@ -146,7 +155,7 @@ const HermanosScreen = ({ navigation }) => {
                         {/* Avatar */}
                         <View style={styles.avatarContainer}>
                             {item.foto ? (
-                                <Image source={{ uri: item.foto }} style={styles.avatar} />
+                                <Image source={{ uri: getSafeImageUrl(item.foto) }} style={styles.avatar} />
                             ) : (
                                 <View style={styles.avatarPlaceholder}>
                                     <Text style={styles.avatarText}>

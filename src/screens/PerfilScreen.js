@@ -18,6 +18,15 @@ import { useAuth } from '../context/AuthContext';
 import api from '../config/api';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { API_URL } from '../config/api';
+
+const getSafeImageUrl = (url) => {
+    if (!url) return null;
+    let safeUrl = String(url).replace('http://localhost:5000', API_URL.replace('/api', '').replace('/api', ''))
+                     .replace('http://127.0.0.1:5000', API_URL.replace('/api', '').replace('/api', ''))
+                     .replace('http://', 'https://');
+    return safeUrl;
+};
 
 const PerfilScreen = ({ navigation }) => {
     const { usuario, actualizarUsuario } = useAuth();
@@ -72,7 +81,7 @@ const PerfilScreen = ({ navigation }) => {
                     />
                     <View style={styles.profileImageContainer}>
                         {perfilData?.foto ? (
-                            <Image source={{ uri: perfilData.foto }} style={styles.profileImage} />
+                            <Image source={{ uri: getSafeImageUrl(perfilData.foto) }} style={styles.profileImage} />
                         ) : (
                             <View style={[styles.profileImage, styles.placeholderImage]}>
                                 <Text style={styles.placeholderText}>

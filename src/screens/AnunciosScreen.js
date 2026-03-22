@@ -15,6 +15,15 @@ import { useAuth } from '../context/AuthContext';
 import api from '../config/api';
 import Card from '../components/Card';
 import { COLORS, FONT_SIZES, SPACING, BORDER_RADIUS, SHADOWS } from '../constants/theme';
+import { API_URL } from '../config/api';
+
+const getSafeImageUrl = (url) => {
+    if (!url) return null;
+    let safeUrl = url.replace('http://localhost:5000', API_URL.replace('/api', ''))
+                     .replace('http://127.0.0.1:5000', API_URL.replace('/api', ''))
+                     .replace('http://', 'https://');
+    return safeUrl;
+};
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
@@ -159,7 +168,7 @@ const AnunciosScreen = ({ navigation }) => {
 
                     {item.imagen && (
                         <Image
-                            source={{ uri: item.imagen }}
+                            source={{ uri: getSafeImageUrl(item.imagen) }}
                             style={styles.anuncioImagen}
                             resizeMode="cover"
                         />

@@ -15,6 +15,15 @@ import Card from '../components/Card';
 import Button from '../components/Button';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { API_URL } from '../config/api';
+
+const getSafeImageUrl = (url) => {
+    if (!url) return null;
+    let safeUrl = String(url).replace('http://localhost:5000', API_URL.replace('/api', '').replace('/api', ''))
+                     .replace('http://127.0.0.1:5000', API_URL.replace('/api', '').replace('/api', ''))
+                     .replace('http://', 'https://');
+    return safeUrl;
+};
 
 const DetalleHermanoScreen = ({ navigation, route }) => {
     const { hermano } = route.params;
@@ -47,7 +56,7 @@ const DetalleHermanoScreen = ({ navigation, route }) => {
                     />
                     <View style={styles.profileImageContainer}>
                         {hermano.foto ? (
-                            <Image source={{ uri: hermano.foto }} style={styles.profileImage} />
+                            <Image source={{ uri: getSafeImageUrl(hermano.foto) }} style={styles.profileImage} />
                         ) : (
                             <View style={[styles.profileImage, styles.placeholderImage]}>
                                 <Text style={styles.placeholderText}>

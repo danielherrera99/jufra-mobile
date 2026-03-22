@@ -15,6 +15,15 @@ import { es } from 'date-fns/locale';
 import api from '../config/api';
 import { COLORS, FONT_SIZES, SPACING, BORDER_RADIUS, SHADOWS } from '../constants/theme';
 import { useAuth } from '../context/AuthContext';
+import { API_URL } from '../config/api';
+
+const getSafeImageUrl = (url) => {
+    if (!url) return null;
+    let safeUrl = String(url).replace('http://localhost:5000', API_URL.replace('/api', '').replace('/api', ''))
+                     .replace('http://127.0.0.1:5000', API_URL.replace('/api', '').replace('/api', ''))
+                     .replace('http://', 'https://');
+    return safeUrl;
+};
 
 const DetalleAnuncioScreen = ({ route, navigation }) => {
     const { anuncio } = route.params;
@@ -116,7 +125,7 @@ const DetalleAnuncioScreen = ({ route, navigation }) => {
 
                     {anuncio.imagen && (
                         <Image
-                            source={{ uri: anuncio.imagen }}
+                            source={{ uri: getSafeImageUrl(anuncio.imagen) }}
                             style={styles.imagenDetalle}
                             resizeMode="cover"
                         />

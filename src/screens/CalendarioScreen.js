@@ -16,8 +16,16 @@ import api from '../config/api';
 import { COLORS, FONT_SIZES, SPACING, BORDER_RADIUS, SHADOWS } from '../constants/theme';
 import { format, isToday, isTomorrow } from 'date-fns';
 import { es } from 'date-fns/locale';
-import Card from '../components/Card';
 import * as Notifications from 'expo-notifications';
+import { API_URL } from '../config/api';
+
+const getSafeImageUrl = (url) => {
+    if (!url) return null;
+    let safeUrl = String(url).replace('http://localhost:5000', API_URL.replace('/api', '').replace('/api', ''))
+                     .replace('http://127.0.0.1:5000', API_URL.replace('/api', '').replace('/api', ''))
+                     .replace('http://', 'https://');
+    return safeUrl;
+};
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -200,7 +208,7 @@ const CalendarioScreen = ({ navigation }) => {
 
                     {item.imagenUrl && (
                         <Image
-                            source={{ uri: item.imagenUrl }}
+                            source={{ uri: getSafeImageUrl(item.imagenUrl) }}
                             style={styles.eventImage}
                             resizeMode="cover"
                         />
