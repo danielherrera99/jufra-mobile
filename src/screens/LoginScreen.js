@@ -8,6 +8,7 @@ import {
     ScrollView,
     Image,
     Alert,
+    TouchableOpacity,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
@@ -22,6 +23,7 @@ const LoginScreen = ({ navigation }) => {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
+    const [rememberMe, setRememberMe] = useState(true);
 
     const validarFormulario = () => {
         const nuevosErrores = {};
@@ -44,7 +46,7 @@ const LoginScreen = ({ navigation }) => {
         if (!validarFormulario()) return;
 
         setLoading(true);
-        const resultado = await login(username.trim(), password);
+        const resultado = await login(username.trim(), password, rememberMe);
         setLoading(false);
 
         if (!resultado.success) {
@@ -101,6 +103,22 @@ const LoginScreen = ({ navigation }) => {
                             error={errors.password}
                             icon={<Text style={styles.inputIcon}>🔒</Text>}
                         />
+
+                        <View style={styles.optionsContainer}>
+                            <TouchableOpacity 
+                                style={styles.checkboxContainer} 
+                                onPress={() => setRememberMe(!rememberMe)}
+                            >
+                                <View style={[styles.checkbox, rememberMe && styles.checkboxChecked]}>
+                                    {rememberMe && <Text style={styles.checkmark}>✓</Text>}
+                                </View>
+                                <Text style={styles.checkboxLabel}>Recordarme</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity onPress={() => navigation.navigate('RecuperarPassword')}>
+                                <Text style={styles.forgotPassword}>¿Olvidaste tu contraseña?</Text>
+                            </TouchableOpacity>
+                        </View>
 
                         <Button
                             title="Iniciar Sesión"
@@ -192,6 +210,44 @@ const styles = StyleSheet.create({
     },
     inputIcon: {
         fontSize: FONT_SIZES.lg,
+    },
+    optionsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginTop: SPACING.xs,
+        marginBottom: SPACING.md,
+    },
+    checkboxContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    checkbox: {
+        width: 20,
+        height: 20,
+        borderRadius: 4,
+        borderWidth: 2,
+        borderColor: COLORS.primary,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 8,
+    },
+    checkboxChecked: {
+        backgroundColor: COLORS.primary,
+    },
+    checkmark: {
+        color: COLORS.white,
+        fontSize: 12,
+        fontWeight: 'bold',
+    },
+    checkboxLabel: {
+        fontSize: FONT_SIZES.sm,
+        color: COLORS.darkGray,
+    },
+    forgotPassword: {
+        fontSize: FONT_SIZES.sm,
+        color: COLORS.primary,
+        fontWeight: '600',
     },
     loginButton: {
         marginTop: SPACING.md,

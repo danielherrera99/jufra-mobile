@@ -70,9 +70,9 @@ const HomeScreen = ({ navigation }) => {
         {
             id: 'asistencia',
             titulo: 'Asistencia',
-            icono: '✅',
+            icono: '📱', // Ícono plano (antes ✅ con sombra)
             descripcion: 'Control QR',
-            color: COLORS.tertiary,
+            color: '#4CAF50', // Verde consistente
             screen: 'Asistencia',
         },
         {
@@ -80,15 +80,15 @@ const HomeScreen = ({ navigation }) => {
             titulo: 'Anuncios',
             icono: '📢',
             descripcion: 'Noticias',
-            color: COLORS.secondary,
+            color: '#FF9800', // Naranja consistente
             screen: 'Anuncios',
         },
         {
             id: 'actas',
             titulo: 'Actas',
-            icono: '📝',
+            icono: '📋', // Ícono plano (antes 📝 con sombra)
             descripcion: 'Reuniones',
-            color: COLORS.accent,
+            color: '#795548', // Marrón
             screen: 'Actas',
         },
         {
@@ -96,7 +96,7 @@ const HomeScreen = ({ navigation }) => {
             titulo: 'Formación',
             icono: '📖',
             descripcion: 'Temas',
-            color: '#673AB7', // Deep Purple
+            color: '#673AB7', // Morado
             screen: 'Formacion',
         },
         {
@@ -105,7 +105,6 @@ const HomeScreen = ({ navigation }) => {
             icono: '📅',
             descripcion: 'Eventos',
             color: '#009688', // Teal
-            screen: 'Calendario',
             screen: 'Calendario',
         },
         {
@@ -161,7 +160,7 @@ const HomeScreen = ({ navigation }) => {
             titulo: 'Servicio',
             icono: '🤲',
             descripcion: 'Misiones',
-            color: '#4CAF50', // Green
+            color: '#8BC34A', // Verde claro
             screen: 'Servicios',
         },
         {
@@ -211,9 +210,9 @@ const HomeScreen = ({ navigation }) => {
                             {modoConsejo ? 'Vista Consejo' : 'Vista Hermano'}
                         </Text>
                         <Switch
-                            trackColor={{ false: "#767577", true: COLORS.tertiary }}
-                            thumbColor={modoConsejo ? COLORS.white : "#f4f3f4"}
-                            ios_backgroundColor="#3e3e3e"
+                            trackColor={{ false: "rgba(255,255,255,0.4)", true: COLORS.tertiary }}
+                            thumbColor={COLORS.white}
+                            ios_backgroundColor="rgba(255,255,255,0.4)"
                             onValueChange={toggleModoConsejo}
                             value={modoConsejo}
                         />
@@ -316,14 +315,20 @@ const styles = StyleSheet.create({
     },
     userRole: {
         fontSize: FONT_SIZES.sm,
-        color: COLORS.gold,
+        color: 'rgba(255, 255, 255, 0.85)',
         textTransform: 'capitalize',
     },
     logoutButton: {
         padding: SPACING.sm,
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+        borderRadius: BORDER_RADIUS.full || 50,
+        width: 44,
+        height: 44,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     logoutIcon: {
-        fontSize: 28,
+        fontSize: 22,
     },
     content: {
         flex: 1,

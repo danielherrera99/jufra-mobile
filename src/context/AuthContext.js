@@ -2,6 +2,7 @@ import React, { createContext, useState, useContext, useEffect, useRef } from 'r
 import { PanResponder, View, AppState } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../config/api';
+import { registerForPushNotificationsAsync } from '../utils/notifications';
 
 const AuthContext = createContext({});
 
@@ -12,6 +13,7 @@ export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(null);
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(null);
+    const [recordarSesion, setRecordarSesion] = useState(false);
 
     // Timer para inactividad
     const timerRef = useRef(null);
@@ -21,7 +23,7 @@ export const AuthProvider = ({ children }) => {
     const resetTimer = () => {
         lastActiveTime.current = Date.now();
         if (timerRef.current) clearTimeout(timerRef.current);
-        if (token) {
+        if (token && !recordarSesion) {
             timerRef.current = setTimeout(() => {
                 console.log("Cerrando sesión por inactividad en foreground...");
                 logout();
@@ -53,7 +55,7 @@ export const AuthProvider = ({ children }) => {
         const subscription = AppState.addEventListener('change', nextAppState => {
             if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
                 const timeElapsed = Date.now() - lastActiveTime.current;
-                if (token && timeElapsed >= INACTIVITY_TIME) {
+                if (token && !recordarSesion && timeElapsed >= INACTIVITY_TIME) {
                     console.log("Cerrando sesión por inactividad al regresar del background...");
                     logout();
                 } else {
@@ -69,7 +71,7 @@ export const AuthProvider = ({ children }) => {
             if (timerRef.current) clearTimeout(timerRef.current);
             subscription.remove();
         };
-    }, [token]);
+    }, [token, recordarSesion]);
 
     // Cargar usuario al iniciar la app
     useEffect(() => {
@@ -80,10 +82,23 @@ export const AuthProvider = ({ children }) => {
         try {
             const tokenGuardado = await AsyncStorage.getItem('token');
             const usuarioGuardado = await AsyncStorage.getItem('usuario');
+            const recordar = await AsyncStorage.getItem('recordarSesion');
 
             if (tokenGuardado && usuarioGuardado) {
                 setToken(tokenGuardado);
                 setUsuario(JSON.parse(usuarioGuardado));
+                if (recordar === 'true') {
+                    setRecordarSesion(true);
+                }
+
+                // Validate and update push token on startup silently
+                registerForPushNotificationsAsync().then(pushToken => {
+                    if (pushToken) {
+                        api.put('/auth/perfil', { expoPushToken: pushToken }, {
+                            headers: { Authorization: `Bearer ${tokenGuardado}` }
+                        }).catch(e => console.log('Error updating push token on startup:', e));
+                    }
+                });
             }
         } catch (error) {
             console.error('Error al cargar usuario:', error);
@@ -92,7 +107,7 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const login = async (username, password) => {
+    const login = async (username, password, rememberMe = false) => {
         try {
             setError(null);
             const response = await api.post('/auth/login', { username, password });
@@ -103,10 +118,29 @@ export const AuthProvider = ({ children }) => {
                 // Guardar en AsyncStorage
                 await AsyncStorage.setItem('token', token);
                 await AsyncStorage.setItem('usuario', JSON.stringify(usuario));
+                if (rememberMe) {
+                    await AsyncStorage.setItem('recordarSesion', 'true');
+                    setRecordarSesion(true);
+                } else {
+                    await AsyncStorage.removeItem('recordarSesion');
+                    setRecordarSesion(false);
+                }
 
                 // Actualizar estado
                 setToken(token);
                 setUsuario(usuario);
+
+                // Setup push notifications
+                const pushToken = await registerForPushNotificationsAsync();
+                if (pushToken) {
+                    try {
+                        await api.put('/auth/perfil', { expoPushToken: pushToken }, {
+                            headers: { Authorization: `Bearer ${token}` }
+                        });
+                    } catch (e) {
+                        console.log('Error saving push token on login:', e);
+                    }
+                }
 
                 return { success: true };
             }
@@ -139,10 +173,12 @@ export const AuthProvider = ({ children }) => {
             // Limpiar AsyncStorage
             await AsyncStorage.removeItem('token');
             await AsyncStorage.removeItem('usuario');
+            await AsyncStorage.removeItem('recordarSesion');
 
             // Limpiar estado
             setToken(null);
             setUsuario(null);
+            setRecordarSesion(false);
         } catch (error) {
             console.error('Error al cerrar sesión:', error);
         }

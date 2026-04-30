@@ -11,7 +11,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -26,7 +26,8 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.herrera99.juframobile"
+      "package": "com.herrera99.juframobile",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -35,6 +36,12 @@
       "eas": {
         "projectId": "114bd9cc-ffdc-4ccc-96d8-2221f4a275d8"
       }
+    },
+    "plugins": [
+      "expo-notifications"
+    ],
+    "runtimeVersion": {
+      "policy": "appVersion"
     }
   }
 }

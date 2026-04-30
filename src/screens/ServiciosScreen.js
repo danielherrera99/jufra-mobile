@@ -25,10 +25,12 @@ const getSafeImageUrl = (url) => {
     return safeUrl;
 };
 
-const ServiciosScreen = ({ navigation }) => {
+const ServiciosScreen = ({ navigation, route }) => {
     const [servicios, setServicios] = useState([]);
     const [loading, setLoading] = useState(true);
     const { usuario, esConsejoActivo } = useAuth();
+    const scrollRef = React.useRef(null);
+    const [layoutMap, setLayoutMap] = useState({});
 
     useEffect(() => {
         cargarServicios();
@@ -51,6 +53,16 @@ const ServiciosScreen = ({ navigation }) => {
             console.error('Error al cargar servicios:', error);
         } finally {
             setLoading(false);
+            
+            // Scroll to service if focusOn param exists
+            if (route.params?.focusOn) {
+                setTimeout(() => {
+                    const y = layoutMap[route.params.focusOn];
+                    if (y !== undefined && scrollRef.current) {
+                        scrollRef.current.scrollTo({ y, animated: true });
+                    }
+                }, 800);
+            }
         }
     };
 
@@ -139,11 +151,18 @@ const ServiciosScreen = ({ navigation }) => {
     );
 
     const renderItem = (item) => {
-        const estaInscrito = item.participantes.some(p => p._id === usuario._id);
-        const cupoLleno = item.cupoMaximo > 0 && item.participantes.length >= item.cupoMaximo;
+        const estaInscrito = (item.participantes || []).some(p => p._id === usuario._id);
+        const cupoLleno = item.cupoMaximo > 0 && (item.participantes || []).length >= item.cupoMaximo;
 
         return (
-            <View key={item._id} style={styles.card}>
+            <View 
+                key={item._id} 
+                style={[styles.card, route.params?.focusOn === item._id && { borderColor: COLORS.primary, borderWidth: 2 }]}
+                onLayout={(event) => {
+                    const { y } = event.nativeEvent.layout;
+                    setLayoutMap(prev => ({ ...prev, [item._id]: y }));
+                }}
+            >
                 <View style={styles.cardHeader}>
                     <Text style={styles.dateBadge}>
                         {format(new Date(item.fecha), "d MMM", { locale: es })}
@@ -242,7 +261,10 @@ const ServiciosScreen = ({ navigation }) => {
                 </View>
             </LinearGradient>
 
-            <ScrollView style={styles.content}>
+            <ScrollView 
+                ref={scrollRef}
+                style={styles.content}
+            >
                 {loading ? (
                     <ActivityIndicator size="large" color={COLORS.primary} style={{ marginTop: 50 }} />
                 ) : (

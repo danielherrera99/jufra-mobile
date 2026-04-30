@@ -17,6 +17,15 @@ import Button from '../components/Button';
 import { COLORS, FONT_SIZES, SPACING, BORDER_RADIUS, SHADOWS } from '../constants/theme';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { API_URL } from '../config/api';
+
+const getSafeImageUrl = (url) => {
+    if (!url) return null;
+    let safeUrl = String(url).replace('http://localhost:5000', API_URL.replace('/api', '').replace('/api', ''))
+                     .replace('http://127.0.0.1:5000', API_URL.replace('/api', '').replace('/api', ''))
+                     .replace('http://', 'https://');
+    return safeUrl;
+};
 
 const AsistenciaScreen = ({ navigation }) => {
     const { usuario } = useAuth();
@@ -66,7 +75,7 @@ const AsistenciaScreen = ({ navigation }) => {
                 <View style={styles.qrContainer}>
                     {usuario.codigoQR ? (
                         <Image
-                            source={{ uri: usuario.codigoQR }}
+                            source={{ uri: getSafeImageUrl(usuario.codigoQR) }}
                             style={styles.qrImage}
                             resizeMode="contain"
                         />
@@ -113,9 +122,15 @@ const AsistenciaScreen = ({ navigation }) => {
                                         {format(fecha, "d 'de' MMMM", { locale: es })} • {format(creado, "HH:mm", { locale: es })}
                                     </Text>
                                 </View>
-                                <View style={[styles.statusBadge, item.presente ? styles.presente : styles.ausente]}>
+                                <View style={[
+                                    styles.statusBadge, 
+                                    item.estado === 'presente' ? styles.presente : 
+                                    item.estado === 'falta' ? styles.ausente : 
+                                    item.estado === 'permiso' ? styles.permiso : 
+                                    styles.tardanza
+                                ]}>
                                     <Text style={styles.statusText}>
-                                        {item.presente ? 'Presente' : 'Falta'}
+                                        {item.estado ? (item.estado.charAt(0).toUpperCase() + item.estado.slice(1)) : (item.presente ? 'Presente' : 'Falta')}
                                     </Text>
                                 </View>
                             </View>
@@ -314,6 +329,12 @@ const styles = StyleSheet.create({
         fontSize: FONT_SIZES.sm,
         fontWeight: '600',
         color: COLORS.black,
+    },
+    permiso: {
+        backgroundColor: '#FFF9C4', // Light yellow
+    },
+    tardanza: {
+        backgroundColor: '#FFE0B2', // Light orange
     },
     adminCard: {
         marginBottom: SPACING.xl,

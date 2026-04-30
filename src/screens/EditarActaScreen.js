@@ -109,13 +109,15 @@ const EditarActaScreen = ({ navigation, route }) => {
                     <Text style={styles.label}>Tipo de Reunión</Text>
                     <View style={styles.pickerContainer}>
                         <Picker
+                            style={{ color: '#1A1A1A' }}
+                            dropdownIconColor="#424242"
                             selectedValue={tipoReunion}
                             onValueChange={(v) => setTipoReunion(v)}
                         >
-                            <Picker.Item label="Consejo" value="consejo" />
-                            <Picker.Item label="Fraternidad" value="fraternidad" />
-                            <Picker.Item label="Formación" value="formacion" />
-                            <Picker.Item label="Extraordinaria" value="extraordinaria" />
+                            <Picker.Item color="#1A1A1A" label="Consejo" value="consejo" />
+                            <Picker.Item color="#1A1A1A" label="Fraternidad" value="fraternidad" />
+                            <Picker.Item color="#1A1A1A" label="Formación" value="formacion" />
+                            <Picker.Item color="#1A1A1A" label="Extraordinaria" value="extraordinaria" />
                         </Picker>
                     </View>
 
@@ -206,6 +208,7 @@ const styles = StyleSheet.create({
         padding: SPACING.md,
         fontSize: FONT_SIZES.md,
         minHeight: 200,
+        color: COLORS.black,
     },
     submitButton: {
         marginTop: SPACING.xl,

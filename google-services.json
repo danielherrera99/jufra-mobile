@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "570693024253",
+    "project_id": "jufra-app",
+    "storage_bucket": "jufra-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:570693024253:android:de6f40796804bfd66c4194",
+        "android_client_info": {
+          "package_name": "com.herrera99.juframobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDUNK7LU-K8WSDyEyXA_pfKY7xM7MnwgKU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

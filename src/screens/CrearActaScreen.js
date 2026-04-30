@@ -171,6 +171,7 @@ const styles = StyleSheet.create({
         padding: SPACING.md,
         fontSize: FONT_SIZES.md,
         minHeight: 200,
+        color: COLORS.black,
     },
     submitButton: {
         marginTop: SPACING.xl,

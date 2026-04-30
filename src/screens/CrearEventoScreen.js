@@ -40,12 +40,20 @@ const CrearEventoScreen = ({ navigation, route }) => {
     }, [route.params?.pickedLocation]);
 
     const onDateChange = (event, selectedDate) => {
+        if (event.type === 'dismissed') {
+            setShowDatePicker(false);
+            return;
+        }
         const currentDate = selectedDate || fecha;
         setShowDatePicker(Platform.OS === 'ios');
         setFecha(currentDate);
     };
 
     const onTimeChange = (event, selectedTime) => {
+        if (event.type === 'dismissed') {
+            setShowTimePicker(false);
+            return;
+        }
         const currentTime = selectedTime || hora;
         setShowTimePicker(Platform.OS === 'ios');
         setHora(currentTime);
@@ -66,7 +74,7 @@ const CrearEventoScreen = ({ navigation, route }) => {
         });
 
         if (!result.canceled) {
-            setImagen(result.assets[0]);
+            setImagen(result.assets[0].uri);
         }
     };
 
@@ -77,6 +85,7 @@ const CrearEventoScreen = ({ navigation, route }) => {
         }
 
         setLoading(true);
+        console.log('--- Iniciando creación de evento ---');
         try {
             // Combinar fecha y hora
             const fechaEvento = new Date(fecha);
@@ -86,30 +95,38 @@ const CrearEventoScreen = ({ navigation, route }) => {
             const horaString = format(hora, 'HH:mm');
 
             const formData = new FormData();
-            formData.append('titulo', titulo);
-            formData.append('descripcion', descripcion);
-            formData.append('lugar', lugar);
+            formData.append('titulo', titulo.trim());
+            formData.append('descripcion', descripcion.trim());
+            formData.append('lugar', lugar.trim());
             formData.append('tipo', tipo);
             formData.append('fecha', fechaEvento.toISOString());
             formData.append('hora', horaString);
 
             if (ubicacion) {
+                console.log('Agregando ubicación:', ubicacion);
                 formData.append('lat', ubicacion.latitude.toString());
                 formData.append('lng', ubicacion.longitude.toString());
             }
 
             if (imagen) {
-                const fileName = imagen.uri.split('/').pop();
-                const fileType = 'image/jpeg';
+                console.log('Procesando imagen:', imagen);
+                const filename = imagen.split('/').pop();
+                const match = /\.(\w+)$/.exec(filename);
+                const type = match ? `image/${match[1]}` : 'image/jpeg';
+                
                 formData.append('imagen', {
-                    uri: imagen.uri,
-                    name: fileName,
-                    type: fileType,
+                    uri: imagen,
+                    name: filename,
+                    type: type,
                 });
             }
 
+            console.log('Enviando FormData a API...');
             const response = await api.post('/eventos', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
+                headers: { 
+                    'Content-Type': 'multipart/form-data',
+                    'Accept': 'application/json'
+                },
             });
 
             if (response.data.success) {
@@ -120,8 +137,12 @@ const CrearEventoScreen = ({ navigation, route }) => {
                 );
             }
         } catch (error) {
-            console.error('Error al crear evento:', error);
-            Alert.alert('Error', 'No se pudo guardar el evento');
+            console.error('Error detallado al crear evento:', error);
+            if (error.response) {
+                console.error('Respuesta del servidor:', error.response.data);
+                console.error('Status:', error.response.status);
+            }
+            Alert.alert('Error', 'No se pudo guardar el evento: ' + (error.response?.data?.message || 'Error de conexión'));
         } finally {
             setLoading(false);
         }
@@ -182,7 +203,6 @@ const CrearEventoScreen = ({ navigation, route }) => {
                             mode="date"
                             display="default"
                             onChange={onDateChange}
-                            minimumDate={new Date()}
                         />
                     )}
 
@@ -232,7 +252,7 @@ const CrearEventoScreen = ({ navigation, route }) => {
                     <Text style={styles.label}>Imagen (Opcional)</Text>
                     <TouchableOpacity style={styles.uploadArea} onPress={pickImage}>
                         {imagen ? (
-                            <Image source={{ uri: imagen.uri }} style={styles.previewImage} />
+                            <Image source={{ uri: imagen }} style={styles.previewImage} />
                         ) : (
                             <View style={styles.uploadPlaceholder}>
                                 <Text style={styles.uploadIcon}>📷</Text>

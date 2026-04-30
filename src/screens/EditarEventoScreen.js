@@ -98,12 +98,20 @@ const EditarEventoScreen = ({ navigation, route }) => {
     };
 
     const onDateChange = (event, selectedDate) => {
+        if (event.type === 'dismissed') {
+            setShowDatePicker(false);
+            return;
+        }
         const currentDate = selectedDate || fecha;
         setShowDatePicker(Platform.OS === 'ios');
         setFecha(currentDate);
     };
 
     const onTimeChange = (event, selectedTime) => {
+        if (event.type === 'dismissed') {
+            setShowTimePicker(false);
+            return;
+        }
         const currentTime = selectedTime || hora;
         setShowTimePicker(Platform.OS === 'ios');
         setHora(currentTime);
@@ -241,7 +249,6 @@ const EditarEventoScreen = ({ navigation, route }) => {
                             mode="date"
                             display="default"
                             onChange={onDateChange}
-                            minimumDate={new Date()}
                         />
                     )}
 

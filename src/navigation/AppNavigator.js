@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 // Screens
 import LoginScreen from '../screens/LoginScreen';
 import RegistroScreen from '../screens/RegistroScreen';
+import RecuperarPasswordScreen from '../screens/RecuperarPasswordScreen';
 import HomeScreen from '../screens/HomeScreen';
 import HermanosScreen from '../screens/HermanosScreen';
 import AnunciosScreen from '../screens/AnunciosScreen';
@@ -78,6 +79,7 @@ const AppNavigator = () => {
                 >
                     <Stack.Screen name="Login" component={LoginScreen} />
                     <Stack.Screen name="Registro" component={RegistroScreen} />
+                    <Stack.Screen name="RecuperarPassword" component={RecuperarPasswordScreen} />
                 </Stack.Navigator>
             ) : (
                 // Stack principal
@@ -88,236 +90,52 @@ const AppNavigator = () => {
                     }}
                 >
                     <Stack.Screen name="Home" component={HomeScreen} />
-                    <Stack.Screen
-                        name="Anuncios"
-                        component={AnunciosScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="CrearAnuncio"
-                        component={CrearAnuncioScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="EditarAnuncio"
-                        component={EditarAnuncioScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="DetalleAnuncio"
-                        component={DetalleAnuncioScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="EditarHermano"
-                        component={EditarHermanoScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="DetalleHermano"
-                        component={DetalleHermanoScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="Asistencia"
-                        component={AsistenciaScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="EscanearQR"
-                        component={EscanearQRScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="RegistroAsistenciaManual"
-                        component={RegistroAsistenciaManualScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="ReporteAsistencia"
-                        component={ReporteAsistenciaScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="Actas"
-                        component={ActasScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="CrearActa"
-                        component={CrearActaScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="DetalleActa"
-                        component={DetalleActaScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="Formacion"
-                        component={FormacionScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="CrearFormacion"
-                        component={CrearFormacionScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="DetalleFormacion"
-                        component={DetalleFormacionScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="EditarFormacion"
-                        component={EditarFormacionScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="Calendario"
-                        component={CalendarioScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="CrearEvento"
-                        component={CrearEventoScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="Cancionero"
-                        component={CancioneroScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="CrearCanto"
-                        component={CrearCantoScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="EditarCanto"
-                        component={EditarCantoScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="DetalleCanto"
-                        component={DetalleCantoScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="Peticiones"
-                        component={PeticionesScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="CrearPeticion"
-                        component={CrearPeticionScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="Documentos"
-                        component={DocumentosScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="CrearDocumento"
-                        component={CrearDocumentoScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="DetalleDocumento"
-                        component={DetalleDocumentoScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="EditarDocumento"
-                        component={EditarDocumentoScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="Consejo"
-                        component={ConsejoScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="Espiritualidad"
-                        component={EspiritualidadScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="CrearEspiritualidad"
-                        component={CrearEspiritualidadScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="Galeria"
-                        component={GaleriaScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="SubirFoto"
-                        component={SubirFotoScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="DetalleFoto"
-                        component={DetalleFotoScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="Servicios"
-                        component={ServiciosScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="CrearServicio"
-                        component={CrearServicioScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="Mensajes"
-                        component={MensajesScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="Chat"
-                        component={ChatScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="Perfil"
-                        component={PerfilScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="EditarPerfil"
-                        component={EditarPerfilScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="Hermanos"
-                        component={HermanosScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="EditarActa"
-                        component={EditarActaScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="EditarEvento"
-                        component={EditarEventoScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="Mapa"
-                        component={MapaScreen}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                        name="SeleccionarUbicacion"
-                        component={SeleccionarUbicacionScreen}
-                        options={{ headerShown: false }}
-                    />
+                    <Stack.Screen name="Anuncios" component={AnunciosScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="CrearAnuncio" component={CrearAnuncioScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="EditarAnuncio" component={EditarAnuncioScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="DetalleAnuncio" component={DetalleAnuncioScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="EditarHermano" component={EditarHermanoScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="DetalleHermano" component={DetalleHermanoScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="Asistencia" component={AsistenciaScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="EscanearQR" component={EscanearQRScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="RegistroAsistenciaManual" component={RegistroAsistenciaManualScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="ReporteAsistencia" component={ReporteAsistenciaScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="Actas" component={ActasScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="CrearActa" component={CrearActaScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="DetalleActa" component={DetalleActaScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="EditarActa" component={EditarActaScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="Formacion" component={FormacionScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="CrearFormacion" component={CrearFormacionScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="DetalleFormacion" component={DetalleFormacionScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="EditarFormacion" component={EditarFormacionScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="Calendario" component={CalendarioScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="CrearEvento" component={CrearEventoScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="Cancionero" component={CancioneroScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="CrearCanto" component={CrearCantoScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="EditarCanto" component={EditarCantoScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="DetalleCanto" component={DetalleCantoScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="Peticiones" component={PeticionesScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="CrearPeticion" component={CrearPeticionScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="Documentos" component={DocumentosScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="CrearDocumento" component={CrearDocumentoScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="DetalleDocumento" component={DetalleDocumentoScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="EditarDocumento" component={EditarDocumentoScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="Consejo" component={ConsejoScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="Espiritualidad" component={EspiritualidadScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="CrearEspiritualidad" component={CrearEspiritualidadScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="Galeria" component={GaleriaScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="SubirFoto" component={SubirFotoScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="DetalleFoto" component={DetalleFotoScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="Servicios" component={ServiciosScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="CrearServicio" component={CrearServicioScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="Mensajes" component={MensajesScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="Chat" component={ChatScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="Perfil" component={PerfilScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="EditarPerfil" component={EditarPerfilScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="Hermanos" component={HermanosScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="EditarEvento" component={EditarEventoScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="Mapa" component={MapaScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="SeleccionarUbicacion" component={SeleccionarUbicacionScreen} options={{ headerShown: false }} />
                 </Stack.Navigator>
             )}
         </NavigationContainer>

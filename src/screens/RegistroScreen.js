@@ -22,11 +22,14 @@ const RegistroScreen = ({ navigation }) => {
     const [formData, setFormData] = useState({
         nombre: '',
         apellido: '',
+        email: '',
         username: '',
         password: '',
         confirmarPassword: '',
         telefono: '',
         fechaNacimiento: new Date(),
+        contactoEmergencia: '',
+        nombreContactoEmergencia: '',
     });
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -57,6 +60,12 @@ const RegistroScreen = ({ navigation }) => {
             nuevosErrores.apellido = 'El apellido es requerido';
         }
 
+        if (!formData.email.trim()) {
+            nuevosErrores.email = 'El correo es requerido para recuperar la contraseña';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+            nuevosErrores.email = 'Ingresa un correo electrónico válido';
+        }
+
         if (!formData.username.trim()) {
             nuevosErrores.username = 'El usuario es requerido';
         } else if (formData.username.length < 4) {
@@ -66,6 +75,15 @@ const RegistroScreen = ({ navigation }) => {
         if (!formData.telefono || !formData.telefono.trim()) {
             nuevosErrores.telefono = 'El teléfono es requerido';
         }
+
+        // Contactos de emergencia ahora son opcionales
+        // if (!formData.nombreContactoEmergencia || !formData.nombreContactoEmergencia.trim()) {
+        //     nuevosErrores.nombreContactoEmergencia = 'Nombre del contacto de emergencia requerido';
+        // }
+
+        // if (!formData.contactoEmergencia || !formData.contactoEmergencia.trim()) {
+        //     nuevosErrores.contactoEmergencia = 'Número de emergencia requerido';
+        // }
 
         if (!formData.password) {
             nuevosErrores.password = 'La contraseña es requerida';
@@ -127,22 +145,41 @@ const RegistroScreen = ({ navigation }) => {
 
                     {/* Formulario */}
                     <View style={styles.formContainer}>
-                        <Input
-                            label="Nombres"
-                            value={formData.nombre}
-                            onChangeText={(valor) => handleChange('nombre', valor)}
-                            placeholder="Tus nombres"
-                            error={errors.nombre}
-                            icon={<Text style={styles.inputIcon}>👤</Text>}
-                        />
+                        <Text style={styles.sectionTitle}>Información Personal</Text>
+                        <View style={styles.divider} />
+
+                        <View style={styles.row}>
+                            <View style={styles.col}>
+                                <Input
+                                    label="Nombres"
+                                    value={formData.nombre}
+                                    onChangeText={(valor) => handleChange('nombre', valor)}
+                                    placeholder="Nombres"
+                                    error={errors.nombre}
+                                    icon={<Text style={styles.inputIcon}>👤</Text>}
+                                />
+                            </View>
+                            <View style={styles.col}>
+                                <Input
+                                    label="Apellidos"
+                                    value={formData.apellido}
+                                    onChangeText={(valor) => handleChange('apellido', valor)}
+                                    placeholder="Apellidos"
+                                    error={errors.apellido}
+                                    icon={<Text style={styles.inputIcon}>👤</Text>}
+                                />
+                            </View>
+                        </View>
 
                         <Input
-                            label="Apellidos"
-                            value={formData.apellido}
-                            onChangeText={(valor) => handleChange('apellido', valor)}
-                            placeholder="Tus apellidos"
-                            error={errors.apellido}
-                            icon={<Text style={styles.inputIcon}>👤</Text>}
+                            label="Correo Electrónico"
+                            value={formData.email}
+                            onChangeText={(valor) => handleChange('email', valor)}
+                            placeholder="ejemplo@gmail.com"
+                            keyboardType="email-address"
+                            autoCapitalize="none"
+                            error={errors.email}
+                            icon={<Text style={styles.inputIcon}>📧</Text>}
                         />
 
                         <View style={styles.dateContainer}>
@@ -151,6 +188,7 @@ const RegistroScreen = ({ navigation }) => {
                                 onPress={() => setShowDatePicker(true)}
                                 style={styles.dateButton}
                             >
+                                <Text style={styles.inputIcon}>📅</Text>
                                 <Text style={styles.dateText}>
                                     {formData.fechaNacimiento.toLocaleDateString()}
                                 </Text>
@@ -171,11 +209,33 @@ const RegistroScreen = ({ navigation }) => {
                             label="Teléfono"
                             value={formData.telefono}
                             onChangeText={(valor) => handleChange('telefono', valor)}
-                            placeholder="+1234567890"
+                            placeholder="+51 999 999 999"
                             keyboardType="phone-pad"
                             error={errors.telefono}
                             icon={<Text style={styles.inputIcon}>📱</Text>}
                         />
+
+                        <Input
+                            label="Contacto de Emergencia (Opcional)"
+                            value={formData.nombreContactoEmergencia}
+                            onChangeText={(valor) => handleChange('nombreContactoEmergencia', valor)}
+                            placeholder="Ej: Mamá / Papá"
+                            error={errors.nombreContactoEmergencia}
+                            icon={<Text style={styles.inputIcon}>👤</Text>}
+                        />
+
+                        <Input
+                            label="Número de Emergencia (Opcional)"
+                            value={formData.contactoEmergencia}
+                            onChangeText={(valor) => handleChange('contactoEmergencia', valor)}
+                            placeholder="+51 999 999 999"
+                            keyboardType="phone-pad"
+                            error={errors.contactoEmergencia}
+                            icon={<Text style={styles.inputIcon}>📱</Text>}
+                        />
+
+                        <Text style={[styles.sectionTitle, { marginTop: SPACING.md }]}>Información de la Cuenta</Text>
+                        <View style={styles.divider} />
 
                         <Input
                             label="Usuario"
@@ -264,6 +324,25 @@ const styles = StyleSheet.create({
         shadowRadius: 16,
         elevation: 8,
     },
+    sectionTitle: {
+        fontSize: FONT_SIZES.lg,
+        fontWeight: 'bold',
+        color: COLORS.primary,
+        marginBottom: SPACING.xs,
+    },
+    divider: {
+        height: 1,
+        backgroundColor: COLORS.lightGray,
+        marginBottom: SPACING.md,
+    },
+    row: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        gap: SPACING.md,
+    },
+    col: {
+        flex: 1,
+    },
     inputIcon: {
         fontSize: FONT_SIZES.lg,
     },
@@ -285,6 +364,8 @@ const styles = StyleSheet.create({
         marginLeft: SPACING.xs,
     },
     dateButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
         backgroundColor: COLORS.offWhite,
         padding: SPACING.md,
         borderRadius: BORDER_RADIUS.md,
@@ -294,6 +375,7 @@ const styles = StyleSheet.create({
     dateText: {
         fontSize: FONT_SIZES.md,
         color: COLORS.black,
+        marginLeft: SPACING.sm,
     },
 });
 

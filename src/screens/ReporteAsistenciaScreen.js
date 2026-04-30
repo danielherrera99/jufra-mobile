@@ -4,13 +4,16 @@ import {
     Text,
     StyleSheet,
     FlatList,
+    SectionList,
     TouchableOpacity,
     ActivityIndicator,
     Platform,
+    Alert,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Picker } from '@react-native-picker/picker';
-import api from '../config/api';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import api, { API_URL } from '../config/api';
 import { COLORS, FONT_SIZES, SPACING, BORDER_RADIUS, SHADOWS } from '../constants/theme';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -35,17 +38,23 @@ const ReporteAsistenciaScreen = ({ navigation }) => {
     const [asistencias, setAsistencias] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filtroTipo, setFiltroTipo] = useState('todos');
+    const [fechaInicio, setFechaInicio] = useState(null);
+    const [fechaFin, setFechaFin] = useState(null);
+    const [showPicker, setShowPicker] = useState({ show: false, mode: 'inicio' });
     const { usuario, esConsejoActivo } = useAuth();
+    const [expandedSections, setExpandedSections] = useState({});
 
     useEffect(() => {
         cargarReporte();
-    }, [filtroTipo]);
+    }, [filtroTipo, fechaInicio, fechaFin]);
 
     const cargarReporte = async () => {
         setLoading(true);
         try {
             const params = {};
             if (filtroTipo !== 'todos') params.tipoReunion = filtroTipo;
+            if (fechaInicio) params.fechaInicio = fechaInicio.toISOString();
+            if (fechaFin) params.fechaFin = fechaFin.toISOString();
 
             const response = await api.get('/asistencia', { params });
 
@@ -64,43 +73,56 @@ const ReporteAsistenciaScreen = ({ navigation }) => {
             setLoading(true);
             const token = await AsyncStorage.getItem('token');
 
-            // Use cacheDirectory which is more reliable for temporary files
-            const directory = FileSystem.cacheDirectory;
-            if (!directory) {
-                throw new Error('No se pudo acceder al directorio temporal');
-            }
+            let queryParams = [];
+            if (fechaInicio) queryParams.push(`fechaInicio=${fechaInicio.toISOString()}`);
+            if (fechaFin) queryParams.push(`fechaFin=${fechaFin.toISOString()}`);
+            const queryString = queryParams.length > 0 ? `?${queryParams.join('&')}` : '';
+            const exportUrl = `${API_URL}/asistencia/exportar${queryString}`;
 
-            const fileUri = directory + 'asistencias.xlsx';
-
-            // Usar la URL base configurada en api.js
-            const baseUrl = api.defaults.baseURL;
-
-            const downloadRes = await downloadAsync(
-                `${baseUrl}/asistencia/exportar`,
-                fileUri,
-                {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                }
-            );
-
-            if (downloadRes.status === 200) {
-                if (await Sharing.isAvailableAsync()) {
-                    await Sharing.shareAsync(downloadRes.uri, {
-                        mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                        dialogTitle: 'Compartir Reporte de Asistencia',
-                        UTI: 'com.microsoft.excel.xlsx'
-                    });
-                } else {
-                    Alert.alert('Error', 'Compartir no está disponible en este dispositivo');
-                }
+            if (Platform.OS === 'web') {
+                const response = await fetch(exportUrl, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!response.ok) throw new Error('No se pudo descargar el archivo del servidor web.');
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'asistencias.xlsx';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
             } else {
-                Alert.alert('Error', 'No se pudo descargar el archivo. Verifica tu conexión.');
+                const directory = FileSystem.cacheDirectory || FileSystem.documentDirectory;
+                if (!directory) {
+                    throw new Error('Carpeta de sistema inalcanzable (directory is null)');
+                }
+                const fileUri = directory + 'asistencias_' + Date.now() + '.xlsx';
+
+                const downloadRes = await FileSystem.downloadAsync(
+                    exportUrl,
+                    fileUri,
+                    { headers: { 'Authorization': `Bearer ${token}` } }
+                );
+
+                if (downloadRes.status === 200) {
+                    if (await Sharing.isAvailableAsync()) {
+                        await Sharing.shareAsync(downloadRes.uri, {
+                            mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                            dialogTitle: 'Compartir Reporte',
+                            UTI: 'com.microsoft.excel.xlsx'
+                        });
+                    } else {
+                        Alert.alert('Error', 'Compartir no está disponible en este dispositivo');
+                    }
+                } else {
+                    throw new Error(`Error del servidor: Status ${downloadRes.status}`);
+                }
             }
         } catch (error) {
             console.error('Error exportando:', error);
-            Alert.alert('Error', 'Falló la exportación del archivo: ' + error.message);
+            Alert.alert('Error de Exportación', error.message || 'Error desconocido al descargar');
         } finally {
             setLoading(false);
         }
@@ -108,8 +130,6 @@ const ReporteAsistenciaScreen = ({ navigation }) => {
 
     const renderItem = ({ item }) => {
         const fechaRegistro = new Date(item.createdAt);
-        const fechaReunion = new Date(item.fecha);
-
         return (
             <View style={styles.card}>
                 <View style={styles.cardHeader}>
@@ -122,53 +142,63 @@ const ReporteAsistenciaScreen = ({ navigation }) => {
                         </Text>
                     </View>
                 </View>
-
                 <View style={styles.infoRow}>
                     <Text style={styles.label}>Reunión:</Text>
                     <Text style={styles.value}>
                         {item.tipoReunion.charAt(0).toUpperCase() + item.tipoReunion.slice(1)}
                     </Text>
                 </View>
-
-                <View style={styles.infoRow}>
-                    <Text style={styles.label}>Fecha Reunión:</Text>
-                    <Text style={styles.value}>
-                        {format(fechaReunion, "d MMM yyyy", { locale: es })}
-                    </Text>
-                </View>
-
                 <View style={styles.divider} />
-
                 <View style={styles.registroInfo}>
                     <Text style={styles.registroLabel}>Registrado el:</Text>
                     <Text style={styles.registroValue}>
                         {format(fechaRegistro, "d MMM yyyy 'a las' HH:mm:ss", { locale: es })}
                     </Text>
                 </View>
-
                 <View style={styles.registroInfo}>
                     <Text style={styles.registroLabel}>Método:</Text>
                     <Text style={styles.registroValue}>
-                        {item.metodoRegistro === 'qr' ? '📸 Escáner QR' : '📝 Manual'}
+                        {item.metodoRegistro === 'qr' ? '📸 QR' : '📝 Manual'}
                     </Text>
                 </View>
-
-                {item.registradoPor && (
-                    <View style={styles.registroInfo}>
-                        <Text style={styles.registroLabel}>Por:</Text>
-                        <Text style={styles.registroValue}>
-                            {item.registradoPor.nombre} {item.registradoPor.apellido}
-                        </Text>
-                    </View>
-                )}
             </View>
         );
+    };
+
+    // Agrupar asistencias por fecha
+    const agruparPorFecha = () => {
+        const grupos = {};
+        asistencias.forEach(item => {
+            const fechaStr = format(new Date(item.fecha), "EEEE, d 'de' MMMM yyyy", { locale: es });
+            if (!grupos[fechaStr]) {
+                grupos[fechaStr] = [];
+            }
+            grupos[fechaStr].push(item);
+        });
+
+        return Object.keys(grupos).map(fecha => ({
+            title: fecha.charAt(0).toUpperCase() + fecha.slice(1),
+            data: grupos[fecha]
+        }));
+    };
+
+    const seccionesOriginales = agruparPorFecha();
+    const secciones = seccionesOriginales.map(sec => ({
+        ...sec,
+        data: expandedSections[sec.title] ? sec.data : []
+    }));
+
+    const toggleSection = (title) => {
+        setExpandedSections(prev => ({
+            ...prev,
+            [title]: !prev[title]
+        }));
     };
 
     return (
         <View style={styles.container}>
             <LinearGradient
-                colors={[COLORS.primary, COLORS.secondary]}
+                colors={[COLORS.secondary, COLORS.primary]}
                 style={styles.header}
             >
                 <View style={styles.headerContent}>
@@ -176,10 +206,9 @@ const ReporteAsistenciaScreen = ({ navigation }) => {
                         <Text style={styles.backIcon}>←</Text>
                     </TouchableOpacity>
                     <View>
-                        <Text style={styles.headerTitle}>Reporte de Asistencia</Text>
-                        <Text style={styles.headerSubtitle}>Historial detallado</Text>
+                        <Text style={styles.headerTitle}>Calendario</Text>
+                        <Text style={styles.headerSubtitle}>Próximos Eventos</Text>
                     </View>
-
                     {esConsejoActivo && (
                         <TouchableOpacity onPress={exportarExcel} style={styles.exportButton}>
                             <Text style={styles.exportIcon}>📊</Text>
@@ -195,22 +224,88 @@ const ReporteAsistenciaScreen = ({ navigation }) => {
                         selectedValue={filtroTipo}
                         onValueChange={(v) => setFiltroTipo(v)}
                         style={styles.picker}
+                        dropdownIconColor="#000000"
                     >
-                        <Picker.Item label="Todos" value="todos" />
-                        <Picker.Item label="Semanal" value="semanal" />
-                        <Picker.Item label="Consejo" value="consejo" />
-                        <Picker.Item label="Formación" value="formacion" />
-                        <Picker.Item label="Apostolado" value="apostolado" />
+                        <Picker.Item label="Todos" value="todos" color="#000000" />
+                        <Picker.Item label="Semanal" value="semanal" color="#000000" />
+                        <Picker.Item label="Consejo" value="consejo" color="#000000" />
+                        <Picker.Item label="Formación" value="formacion" color="#000000" />
+                        <Picker.Item label="Apostolado" value="apostolado" color="#000000" />
                     </Picker>
                 </View>
+
+                <View style={styles.dateFiltros}>
+                    <TouchableOpacity 
+                        style={styles.dateButton}
+                        onPress={() => setShowPicker({ show: true, mode: 'inicio' })}
+                    >
+                        <Text style={styles.dateButtonText}>
+                            {fechaInicio ? format(fechaInicio, "dd/MM/yyyy") : "Fecha Inicio"}
+                        </Text>
+                    </TouchableOpacity>
+                    <Text style={{ marginHorizontal: 10 }}>-</Text>
+                    <TouchableOpacity 
+                        style={styles.dateButton}
+                        onPress={() => setShowPicker({ show: true, mode: 'fin' })}
+                    >
+                        <Text style={styles.dateButtonText}>
+                            {fechaFin ? format(fechaFin, "dd/MM/yyyy") : "Fecha Fin"}
+                        </Text>
+                    </TouchableOpacity>
+                    {(fechaInicio || fechaFin) && (
+                        <TouchableOpacity 
+                            style={styles.clearDateButton}
+                            onPress={() => {
+                                setFechaInicio(null);
+                                setFechaFin(null);
+                            }}
+                        >
+                            <Text style={styles.clearDateText}>✕</Text>
+                        </TouchableOpacity>
+                    )}
+                </View>
             </View>
+
+            {showPicker.show && (
+                <DateTimePicker
+                    value={
+                        showPicker.mode === 'inicio' 
+                            ? (fechaInicio || new Date()) 
+                            : (fechaFin || new Date())
+                    }
+                    mode="date"
+                    display="default"
+                    onChange={(event, selectedDate) => {
+                        setShowPicker({ show: false, mode: 'inicio' });
+                        if (event.type === 'set' && selectedDate) {
+                            if (showPicker.mode === 'inicio') {
+                                setFechaInicio(selectedDate);
+                            } else {
+                                setFechaFin(selectedDate);
+                            }
+                        }
+                    }}
+                />
+            )}
 
             {loading ? (
                 <ActivityIndicator size="large" color={COLORS.primary} style={{ marginTop: 20 }} />
             ) : (
-                <FlatList
-                    data={asistencias}
+                <SectionList
+                    sections={secciones}
                     renderItem={renderItem}
+                    renderSectionHeader={({ section: { title } }) => (
+                        <TouchableOpacity 
+                            style={styles.sectionHeader}
+                            onPress={() => toggleSection(title)}
+                            activeOpacity={0.7}
+                        >
+                            <Text style={styles.sectionHeaderText}>📅 {title}</Text>
+                            <Text style={styles.sectionHeaderIcon}>
+                                {expandedSections[title] ? '▼' : '▶'}
+                            </Text>
+                        </TouchableOpacity>
+                    )}
                     keyExtractor={(item) => item._id}
                     contentContainerStyle={styles.list}
                     ListEmptyComponent={
@@ -283,6 +378,39 @@ const styles = StyleSheet.create({
     },
     picker: {
         height: 50,
+    },
+    dateFiltros: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: SPACING.md,
+    },
+    dateButton: {
+        flex: 1,
+        borderWidth: 1,
+        borderColor: COLORS.lightGray,
+        borderRadius: BORDER_RADIUS.md,
+        padding: SPACING.sm,
+        alignItems: 'center',
+        backgroundColor: COLORS.offWhite,
+    },
+    dateButtonText: {
+        fontSize: FONT_SIZES.sm,
+        color: COLORS.darkGray,
+    },
+    clearDateButton: {
+        marginLeft: 10,
+        padding: 5,
+        backgroundColor: COLORS.gray,
+        borderRadius: 15,
+        width: 30,
+        height: 30,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    clearDateText: {
+        color: COLORS.white,
+        fontWeight: 'bold',
+        fontSize: 12,
     },
     list: {
         padding: SPACING.md,
@@ -357,6 +485,27 @@ const styles = StyleSheet.create({
     emptyText: {
         textAlign: 'center',
         marginTop: 20,
+        color: COLORS.gray,
+    },
+    sectionHeader: {
+        backgroundColor: COLORS.cream,
+        paddingVertical: SPACING.sm,
+        paddingHorizontal: SPACING.xs,
+        marginTop: SPACING.md,
+        marginBottom: SPACING.sm,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        borderBottomWidth: 1,
+        borderBottomColor: COLORS.lightGray,
+    },
+    sectionHeaderText: {
+        fontSize: FONT_SIZES.md,
+        fontWeight: 'bold',
+        color: COLORS.primary,
+    },
+    sectionHeaderIcon: {
+        fontSize: FONT_SIZES.sm,
         color: COLORS.gray,
     },
 });

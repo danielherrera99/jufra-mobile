@@ -113,7 +113,7 @@ const MapaScreen = ({ navigation, route }) => {
             const coord = getValidCoordinate(evento.ubicacion);
             if (coord) {
                  markersScript += `
-                     var iconEvento = L.divIcon({className: 'evento-marker', html: '📅', iconSize: [25, 25]});
+                     var iconEvento = L.divIcon({className: 'user-marker', html: '📅', iconSize: [25, 25]});
                      var m = L.marker([${coord.lat}, ${coord.lng}], {icon: iconEvento}).addTo(map);
                      m.bindPopup("<b>${evento.titulo.replace(/'/g, "\\'")}</b><br>${(evento.lugar || '').replace(/'/g, "\\'")}");
                  `;
@@ -125,7 +125,7 @@ const MapaScreen = ({ navigation, route }) => {
             const coord = getValidCoordinate(anuncio.ubicacion);
             if (coord) {
                  markersScript += `
-                     var iconAnuncio = L.divIcon({className: 'anuncio-marker', html: '📢', iconSize: [25, 25]});
+                     var iconAnuncio = L.divIcon({className: 'user-marker', html: '📢', iconSize: [25, 25]});
                      var m = L.marker([${coord.lat}, ${coord.lng}], {icon: iconAnuncio}).addTo(map);
                      m.bindPopup("<b>${anuncio.titulo.replace(/'/g, "\\'")}</b><br>${(anuncio.tipo || '').replace(/'/g, "\\'")}");
                  `;
@@ -137,7 +137,7 @@ const MapaScreen = ({ navigation, route }) => {
             const coord = getValidCoordinate(servicio.ubicacion);
             if (coord) {
                  markersScript += `
-                     var iconServicio = L.divIcon({className: 'servicio-marker', html: '🤲', iconSize: [25, 25]});
+                     var iconServicio = L.divIcon({className: 'user-marker', html: '🤲', iconSize: [25, 25]});
                      var m = L.marker([${coord.lat}, ${coord.lng}], {icon: iconServicio}).addTo(map);
                      m.bindPopup("<b>${servicio.titulo.replace(/'/g, "\\'")}</b><br>${(servicio.lugar || '').replace(/'/g, "\\'")}");
                  `;
@@ -152,9 +152,9 @@ const MapaScreen = ({ navigation, route }) => {
             <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
             <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
             <style>
-                body { margin: 0; padding: 0; background-color: #f5f5f5; }
+                body { margin: 0; padding: 0; background-color: #f5f5f5; font-family: -apple-system, sans-serif; }
                 #map { height: 100vh; width: 100vw; }
-                .user-marker, .evento-marker, .anuncio-marker, .servicio-marker {
+                .user-marker {
                     font-size: 24px;
                     text-align: center;
                     line-height: 24px;
@@ -174,6 +174,10 @@ const MapaScreen = ({ navigation, route }) => {
                 }).addTo(map);
 
                 ${markersScript}
+
+                function verDetalles(tipo, id) {
+                    window.ReactNativeWebView.postMessage(JSON.stringify({tipo, id}));
+                }
             </script>
         </body>
         </html>
@@ -210,6 +214,16 @@ const MapaScreen = ({ navigation, route }) => {
                             domStorageEnabled={true}
                             scrollEnabled={false}
                             originWhitelist={['*']}
+                            onMessage={(event) => {
+                                try {
+                                    const { tipo, id } = JSON.parse(event.nativeEvent.data);
+                                    if (tipo === 'anuncio') navigation.navigate('DetalleAnuncio', { id });
+                                    else if (tipo === 'evento') navigation.navigate('Calendario', { id }); // Redirige a calendario
+                                    else if (tipo === 'servicio') navigation.navigate('Servicios', { focusOn: id });
+                                } catch (e) {
+                                    console.error("Error al procesar mensaje de WebView", e);
+                                }
+                            }}
                             userAgent="Mozilla/5.0 (Linux; Android 10; Mobile) JUFRA-App/1.0"
                             headers={{
                                 'Referer': 'https://jufra-app.com'
