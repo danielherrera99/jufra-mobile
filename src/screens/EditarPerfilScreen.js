@@ -23,6 +23,7 @@ const EditarPerfilScreen = ({ navigation, route }) => {
         nombre: usuarioInicial.nombre,
         apellido: usuarioInicial.apellido,
         telefono: usuarioInicial.telefono || '',
+        email: usuarioInicial.email || '',
         fechaNacimiento: usuarioInicial.fechaNacimiento || '',
         fechaIngreso: usuarioInicial.fechaIngreso || '',
         fechaPromesa: usuarioInicial.fechaPromesa || '',
@@ -105,6 +106,14 @@ const EditarPerfilScreen = ({ navigation, route }) => {
                         onChangeText={(v) => handleChange('telefono', v)}
                         keyboardType="phone-pad"
                         placeholder="Ej: 9991234567"
+                    />
+                    <Input
+                        label="Correo Electrónico"
+                        value={formData.email}
+                        onChangeText={(v) => handleChange('email', v)}
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                        placeholder="Ej: correo@gmail.com"
                     />
 
                     <View style={styles.divider} />

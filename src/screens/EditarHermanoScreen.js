@@ -25,6 +25,7 @@ const EditarHermanoScreen = ({ navigation, route }) => {
         cargo: hermano.cargo,
         etapaFormacion: hermano.etapaFormacion,
         username: hermano.username || '',
+        email: hermano.email || '',
         password: '',
         fechaNacimiento: hermano.fechaNacimiento || '',
         fechaIngreso: hermano.fechaIngreso || '',
@@ -159,6 +160,15 @@ const EditarHermanoScreen = ({ navigation, route }) => {
                     />
 
                     <Input
+                        label="Correo Electrónico"
+                        value={formData.email}
+                        onChangeText={(v) => handleChange('email', v)}
+                        autoCapitalize="none"
+                        keyboardType="email-address"
+                        placeholder="Ej: correo@gmail.com"
+                    />
+
+                    <Input
                         label="Nueva Contraseña (Opcional)"
                         value={formData.password}
                         onChangeText={(v) => handleChange('password', v)}
@@ -172,10 +182,11 @@ const EditarHermanoScreen = ({ navigation, route }) => {
                         <Picker
                             selectedValue={formData.rol}
                             onValueChange={(v) => handleChange('rol', v)}
+                            style={{ color: COLORS.black }}
                         >
-                            <Picker.Item label="Miembro" value="miembro" />
-                            <Picker.Item label="Consejo" value="consejo" />
-                            <Picker.Item label="Admin" value="admin" />
+                            <Picker.Item label="Miembro" value="miembro" color={COLORS.black} />
+                            <Picker.Item label="Consejo" value="consejo" color={COLORS.black} />
+                            <Picker.Item label="Admin" value="admin" color={COLORS.black} />
                         </Picker>
                     </View>
 
@@ -184,14 +195,15 @@ const EditarHermanoScreen = ({ navigation, route }) => {
                         <Picker
                             selectedValue={formData.cargo}
                             onValueChange={(v) => handleChange('cargo', v)}
+                            style={{ color: COLORS.black }}
                         >
-                            <Picker.Item label="Ninguno" value="ninguno" />
-                            <Picker.Item label="Coordinador" value="coordinador" />
-                            <Picker.Item label="Vice-Coordinador" value="vice-coordinador" />
-                            <Picker.Item label="Secretario" value="secretario" />
-                            <Picker.Item label="Tesorero" value="tesorero" />
-                            <Picker.Item label="Formador" value="formador" />
-                            <Picker.Item label="Animador" value="animador" />
+                            <Picker.Item label="Ninguno" value="ninguno" color={COLORS.black} />
+                            <Picker.Item label="Coordinador" value="coordinador" color={COLORS.black} />
+                            <Picker.Item label="Vice-Coordinador" value="vice-coordinador" color={COLORS.black} />
+                            <Picker.Item label="Secretario" value="secretario" color={COLORS.black} />
+                            <Picker.Item label="Tesorero" value="tesorero" color={COLORS.black} />
+                            <Picker.Item label="Formador" value="formador" color={COLORS.black} />
+                            <Picker.Item label="Animador" value="animador" color={COLORS.black} />
                         </Picker>
                     </View>
 
@@ -200,11 +212,12 @@ const EditarHermanoScreen = ({ navigation, route }) => {
                         <Picker
                             selectedValue={formData.etapaFormacion}
                             onValueChange={(v) => handleChange('etapaFormacion', v)}
+                            style={{ color: COLORS.black }}
                         >
-                            <Picker.Item label="Aspirante" value="aspirante" />
-                            <Picker.Item label="Iniciado" value="iniciado" />
-                            <Picker.Item label="En Formación" value="en_formacion" />
-                            <Picker.Item label="Promesado" value="promesado" />
+                            <Picker.Item label="Aspirante" value="aspirante" color={COLORS.black} />
+                            <Picker.Item label="Iniciado" value="iniciado" color={COLORS.black} />
+                            <Picker.Item label="En Formación" value="en_formacion" color={COLORS.black} />
+                            <Picker.Item label="Promesado" value="promesado" color={COLORS.black} />
                         </Picker>
                     </View>
 
@@ -213,9 +226,10 @@ const EditarHermanoScreen = ({ navigation, route }) => {
                         <Picker
                             selectedValue={formData.activo}
                             onValueChange={(v) => handleChange('activo', v)}
+                            style={{ color: COLORS.black }}
                         >
-                            <Picker.Item label="🟢 Activo" value={true} />
-                            <Picker.Item label="🔴 Inactivo (Sin Acceso)" value={false} />
+                            <Picker.Item label="🟢 Activo" value={true} color={COLORS.black} />
+                            <Picker.Item label="🔴 Inactivo (Sin Acceso)" value={false} color={COLORS.black} />
                         </Picker>
                     </View>
 

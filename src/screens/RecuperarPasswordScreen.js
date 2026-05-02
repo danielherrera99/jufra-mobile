@@ -7,7 +7,8 @@ import {
     Platform,
     ScrollView,
     Alert,
-    TouchableOpacity
+    TouchableOpacity,
+    Linking
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
@@ -95,6 +96,18 @@ const RecuperarPasswordScreen = ({ navigation }) => {
         } finally {
             setLoading(false);
         }
+    const handleWhatsAppHelp = () => {
+        const message = `Hola, necesito ayuda para recuperar mi contraseña de JUFRA. Mi usuario/correo es: ${usernameOrEmail || '...'}`;
+        const url = `whatsapp://send?phone=51981574685&text=${encodeURIComponent(message)}`;
+        
+        Linking.canOpenURL(url).then(supported => {
+            if (supported) {
+                Linking.openURL(url);
+            } else {
+                // Fallback para navegador si no tiene app instalada
+                Linking.openURL(`https://wa.me/51981574685?text=${encodeURIComponent(message)}`);
+            }
+        });
     };
 
     return (
@@ -190,6 +203,20 @@ const RecuperarPasswordScreen = ({ navigation }) => {
                                 />
                             </>
                         )}
+
+                        <View style={styles.helpDivider}>
+                            <View style={styles.dividerLine} />
+                            <Text style={styles.dividerText}>¿Tienes problemas?</Text>
+                            <View style={styles.dividerLine} />
+                        </View>
+
+                        <TouchableOpacity 
+                            style={styles.whatsappButton} 
+                            onPress={handleWhatsAppHelp}
+                        >
+                            <Text style={styles.whatsappIcon}>💬</Text>
+                            <Text style={styles.whatsappText}>Ayuda por WhatsApp</Text>
+                        </TouchableOpacity>
                     </View>
                 </ScrollView>
             </LinearGradient>
@@ -255,6 +282,44 @@ const styles = StyleSheet.create({
         color: COLORS.primary,
         fontSize: FONT_SIZES.md,
         fontWeight: '600',
+    },
+    helpDivider: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: SPACING.xl,
+        marginBottom: SPACING.md,
+    },
+    dividerLine: {
+        flex: 1,
+        height: 1,
+        backgroundColor: '#E0E0E0',
+    },
+    dividerText: {
+        paddingHorizontal: 10,
+        color: COLORS.darkGray,
+        fontSize: FONT_SIZES.sm,
+    },
+    whatsappButton: {
+        flexDirection: 'row',
+        backgroundColor: '#25D366',
+        borderRadius: BORDER_RADIUS.lg,
+        padding: SPACING.md,
+        justifyContent: 'center',
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
+    },
+    whatsappIcon: {
+        fontSize: 20,
+        marginRight: 10,
+    },
+    whatsappText: {
+        color: COLORS.white,
+        fontWeight: 'bold',
+        fontSize: FONT_SIZES.md,
     }
 });
 

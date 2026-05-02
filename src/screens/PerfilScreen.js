@@ -141,6 +141,13 @@ const PerfilScreen = ({ navigation }) => {
                         <View style={styles.divider} />
 
                         <View style={styles.infoRow}>
+                            <Text style={styles.label}>Correo:</Text>
+                            <Text style={styles.value}>{perfilData?.email || 'No registrado'}</Text>
+                        </View>
+
+                        <View style={styles.divider} />
+
+                        <View style={styles.infoRow}>
                             <Text style={styles.label}>Teléfono:</Text>
                             <Text style={styles.value}>{perfilData?.telefono || 'No registrado'}</Text>
                         </View>

@@ -131,6 +131,13 @@ const DetalleHermanoScreen = ({ navigation, route }) => {
                         <View style={styles.divider} />
 
                         <View style={styles.infoRow}>
+                            <Text style={styles.label}>Correo:</Text>
+                            <Text style={styles.value}>{hermano.email || 'No registrado'}</Text>
+                        </View>
+
+                        <View style={styles.divider} />
+
+                        <View style={styles.infoRow}>
                             <Text style={styles.label}>Teléfono:</Text>
                             <Text style={styles.value}>{hermano.telefono || 'No registrado'}</Text>
                         </View>
