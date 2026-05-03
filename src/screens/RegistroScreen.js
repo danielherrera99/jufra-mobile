@@ -123,7 +123,7 @@ const RegistroScreen = ({ navigation }) => {
             );
         }
     const handleWhatsAppHelp = () => {
-        const message = `Hola, necesito ayuda para crear mi cuenta en la App JUFRA. Mi nombre es ${formData.nombre} ${formData.apellido}`;
+        const message = `Hola hermano, tengo un problema en la App, por favor me ayudas`;
         const url = `whatsapp://send?phone=51981574685&text=${encodeURIComponent(message)}`;
         
         Linking.canOpenURL(url).then(supported => {

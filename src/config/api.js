@@ -6,8 +6,8 @@ import Constants from 'expo-constants';
 
 // Función para obtener la URL base
 const getBaseUrl = () => {
-    // Apuntando al servidor de producción en Render
-    return 'https://api-jufra.onrender.com/api';
+    // Usar variable de entorno si existe, de lo contrario usar producción por defecto
+    return process.env.EXPO_PUBLIC_API_URL || 'https://api-jufra.onrender.com/api';
 };
 
 export const API_URL = getBaseUrl();

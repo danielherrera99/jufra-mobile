@@ -97,7 +97,7 @@ const RecuperarPasswordScreen = ({ navigation }) => {
             setLoading(false);
         }
     const handleWhatsAppHelp = () => {
-        const message = `Hola, necesito ayuda para recuperar mi contraseña de JUFRA. Mi usuario/correo es: ${usernameOrEmail || '...'}`;
+        const message = `Hola hermano, tengo un problema en la App, por favor me ayudas`;
         const url = `whatsapp://send?phone=51981574685&text=${encodeURIComponent(message)}`;
         
         Linking.canOpenURL(url).then(supported => {
