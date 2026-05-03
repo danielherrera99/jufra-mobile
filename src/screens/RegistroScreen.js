@@ -122,6 +122,8 @@ const RegistroScreen = ({ navigation }) => {
                 [{ text: 'Entendido', onPress: () => navigation.navigate('Login') }]
             );
         }
+    };
+
     const handleWhatsAppHelp = () => {
         const message = `Hola hermano, tengo un problema en la App, por favor me ayudas`;
         const url = `whatsapp://send?phone=51981574685&text=${encodeURIComponent(message)}`;

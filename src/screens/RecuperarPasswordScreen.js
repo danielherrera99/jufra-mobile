@@ -96,6 +96,8 @@ const RecuperarPasswordScreen = ({ navigation }) => {
         } finally {
             setLoading(false);
         }
+    };
+
     const handleWhatsAppHelp = () => {
         const message = `Hola hermano, tengo un problema en la App, por favor me ayudas`;
         const url = `whatsapp://send?phone=51981574685&text=${encodeURIComponent(message)}`;
