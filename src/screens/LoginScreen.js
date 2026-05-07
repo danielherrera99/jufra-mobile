@@ -138,9 +138,7 @@ const LoginScreen = ({ navigation }) => {
 
                     {/* Footer */}
                     <View style={styles.footer}>
-                        <Text style={styles.footerText}>
-                            Desarrollado por consejo local JUFRA POMALCA
-                        </Text>
+                        <Text style={styles.footerText}>Desarrollado por JUFRA Pomalca</Text>
                     </View>
                 </ScrollView>
             </LinearGradient>
