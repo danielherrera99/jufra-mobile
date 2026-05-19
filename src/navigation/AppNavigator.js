@@ -54,6 +54,8 @@ import ServiciosScreen from '../screens/ServiciosScreen';
 import CrearServicioScreen from '../screens/CrearServicioScreen';
 import MensajesScreen from '../screens/MensajesScreen';
 import ChatScreen from '../screens/ChatScreen';
+import ComunicacionScreen from '../screens/ComunicacionScreen';
+import SolicitudesScreen from '../screens/SolicitudesScreen';
 
 import { COLORS } from '../constants/theme';
 
@@ -136,6 +138,8 @@ const AppNavigator = () => {
                     <Stack.Screen name="EditarEvento" component={EditarEventoScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="Mapa" component={MapaScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="SeleccionarUbicacion" component={SeleccionarUbicacionScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="Comunicacion" component={ComunicacionScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="Solicitudes" component={SolicitudesScreen} options={{ headerShown: false }} />
                 </Stack.Navigator>
             )}
         </NavigationContainer>

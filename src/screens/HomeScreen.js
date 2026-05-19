@@ -7,12 +7,23 @@ import {
     TouchableOpacity,
     RefreshControl,
     Switch,
+    Image,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { useAuth } from '../context/AuthContext';
 import Card from '../components/Card';
-import api from '../config/api';
+import api, { API_URL } from '../config/api';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+
+const getSafeImageUrl = (url) => {
+    if (!url) return null;
+    let safeUrl = String(url).replace('http://localhost:5000', API_URL.replace('/api', '').replace('/api', ''))
+                     .replace('http://127.0.0.1:5000', API_URL.replace('/api', '').replace('/api', ''))
+                     .replace('http://', 'https://');
+    return safeUrl;
+};
 import { COLORS, FONT_SIZES, SPACING, BORDER_RADIUS, SHADOWS } from '../constants/theme';
 
 const HomeScreen = ({ navigation }) => {
@@ -22,12 +33,14 @@ const HomeScreen = ({ navigation }) => {
         proximosAniversarios: [],
     });
     const [refreshing, setRefreshing] = useState(false);
+    const [serverStatus, setServerStatus] = useState('connecting');
 
     useEffect(() => {
         cargarEstadisticas();
     }, []);
 
     const cargarEstadisticas = async () => {
+        setServerStatus('connecting');
         try {
             // Cargar hermanos
             const hermanos = await api.get('/hermanos');
@@ -39,8 +52,10 @@ const HomeScreen = ({ navigation }) => {
                 totalHermanos: hermanos.data.count || 0,
                 proximosAniversarios: aniversarios.data.aniversarios?.slice(0, 3) || [],
             });
+            setServerStatus('online');
         } catch (error) {
             console.error('Error al cargar estadísticas:', error);
+            setServerStatus('offline');
         }
     };
 
@@ -124,6 +139,14 @@ const HomeScreen = ({ navigation }) => {
             screen: 'Peticiones',
         },
         {
+            id: 'solicitudes',
+            titulo: 'Solicitudes Web',
+            icono: '🙋',
+            descripcion: 'Prospectos',
+            color: '#E91E63', // Pink
+            screen: 'Solicitudes',
+        },
+        {
             id: 'documentos',
             titulo: 'Documentos',
             icono: '📜',
@@ -179,6 +202,14 @@ const HomeScreen = ({ navigation }) => {
             color: '#FF5722', // Deep Orange
             screen: 'Mapa',
         },
+        {
+            id: 'comunicacion',
+            titulo: 'Comunicación',
+            icono: '📧',
+            descripcion: 'Correos Oficiales',
+            color: '#00BCD4', // Cyan
+            screen: 'Comunicacion',
+        },
     ];
 
     return (
@@ -191,12 +222,25 @@ const HomeScreen = ({ navigation }) => {
                 style={styles.header}
             >
                 <View style={styles.headerContent}>
-                    <TouchableOpacity onPress={() => navigation.navigate('Perfil')}>
-                        <Text style={styles.greeting}>Paz y Bien 🕊️</Text>
-                        <Text style={styles.userName}>{usuario?.nombre} {usuario?.apellido}</Text>
-                        <Text style={styles.userRole}>
-                            {usuario?.cargo !== 'ninguno' ? usuario?.cargo : usuario?.rol}
-                        </Text>
+                    <TouchableOpacity onPress={() => navigation.navigate('Perfil')} style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+                        <View style={styles.profileImageSmallContainer}>
+                            {usuario?.foto ? (
+                                <Image source={{ uri: getSafeImageUrl(usuario.foto) }} style={styles.profileImageSmall} />
+                            ) : (
+                                <View style={[styles.profileImageSmall, styles.placeholderImageSmall]}>
+                                    <Text style={styles.placeholderTextSmall}>
+                                        {usuario?.nombre?.[0]}{usuario?.apellido?.[0]}
+                                    </Text>
+                                </View>
+                            )}
+                        </View>
+                        <View style={{ marginLeft: 12 }}>
+                            <Text style={styles.greeting}>Paz y Bien 🕊️</Text>
+                            <Text style={styles.userName}>{usuario?.nombre} {usuario?.apellido}</Text>
+                            <Text style={styles.userRole}>
+                                {usuario?.cargo !== 'ninguno' ? usuario?.cargo : usuario?.rol}
+                            </Text>
+                        </View>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={logout} style={styles.logoutButton}>
                         <Text style={styles.logoutIcon}>🚪</Text>
@@ -206,19 +250,33 @@ const HomeScreen = ({ navigation }) => {
                 {/* Switch Vista Consejo (Solo si es consejo real) */}
                 {esConsejoReal && (
                     <View style={styles.switchContainer}>
-                        <Text style={styles.switchLabel}>
-                            {modoConsejo ? 'Vista Consejo' : 'Vista Hermano'}
+                        <Text style={styles.currentDateText}>
+                            {format(new Date(), "EEEE, d 'de' MMMM", { locale: es }).replace(/^\w/, (c) => c.toUpperCase())}
                         </Text>
-                        <Switch
-                            trackColor={{ false: "rgba(255,255,255,0.4)", true: COLORS.tertiary }}
-                            thumbColor={COLORS.white}
-                            ios_backgroundColor="rgba(255,255,255,0.4)"
-                            onValueChange={toggleModoConsejo}
-                            value={modoConsejo}
-                        />
+                        <View style={styles.switchInner}>
+                            <Text style={styles.switchLabel}>
+                                {modoConsejo ? 'Vista Consejo' : 'Vista Hermano'}
+                            </Text>
+                            <Switch
+                                trackColor={{ false: "rgba(255,255,255,0.4)", true: COLORS.tertiary }}
+                                thumbColor={COLORS.white}
+                                ios_backgroundColor="rgba(255,255,255,0.4)"
+                                onValueChange={toggleModoConsejo}
+                                value={modoConsejo}
+                            />
+                        </View>
                     </View>
                 )}
             </LinearGradient>
+
+            {/* Server Status Indicator */}
+            {serverStatus !== 'online' && (
+                <View style={[styles.serverStatusBanner, serverStatus === 'connecting' ? styles.statusConnecting : styles.statusOffline]}>
+                    <Text style={styles.serverStatusText}>
+                        {serverStatus === 'connecting' ? '⏳ Conectando al servidor...' : '🔴 Servidor en reposo. Desliza hacia abajo para despertar.'}
+                    </Text>
+                </View>
+            )}
 
             <ScrollView
                 style={styles.content}
@@ -256,8 +314,8 @@ const HomeScreen = ({ navigation }) => {
                 <Text style={styles.sectionTitle}>Módulos</Text>
                 <View style={styles.menuGrid}>
                     {menuItems.map((item) => {
-                        // Restringir módulos Hermanos y Actas solo al Consejo Activo
-                        if ((item.id === 'hermanos' || item.id === 'actas') && !esConsejoActivo) {
+                        // Restringir módulos Hermanos, Actas, Comunicacion y Solicitudes solo al Consejo Activo
+                        if ((item.id === 'hermanos' || item.id === 'actas' || item.id === 'comunicacion' || item.id === 'solicitudes') && !esConsejoActivo) {
                             return null;
                         }
 
@@ -268,14 +326,20 @@ const HomeScreen = ({ navigation }) => {
                                 onPress={() => navigation.navigate(item.screen)}
                                 activeOpacity={0.8}
                             >
-                                <LinearGradient
-                                    colors={[item.color, item.color + 'CC']}
-                                    style={styles.menuGradient}
-                                >
-                                    <Text style={styles.menuIcon}>{item.icono}</Text>
-                                    <Text style={styles.menuTitulo}>{item.titulo}</Text>
-                                    <Text style={styles.menuDescripcion}>{item.descripcion}</Text>
-                                </LinearGradient>
+                                <View style={[styles.menuShadowLayer, { backgroundColor: item.color }]}>
+                                    <View style={styles.menuInnerCard}>
+                                        <View style={[styles.menuIconContainer, { backgroundColor: item.color + '15' }]}>
+                                            <Text style={styles.menuIcon}>{item.icono}</Text>
+                                        </View>
+                                        
+                                        <View style={styles.menuTextContainer}>
+                                            <Text style={styles.menuTitulo}>{item.titulo}</Text>
+                                            <Text style={styles.menuDescripcion}>{item.descripcion}</Text>
+                                        </View>
+                                        
+                                        <Text style={styles.menuArrow}>›</Text>
+                                    </View>
+                                </View>
                             </TouchableOpacity>
                         );
                     })}
@@ -303,20 +367,58 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     greeting: {
-        fontSize: FONT_SIZES.md,
+        fontSize: FONT_SIZES.lg,
         color: COLORS.ivory,
-        marginBottom: SPACING.xs,
+        marginBottom: 2,
     },
     userName: {
         fontSize: FONT_SIZES.xxl,
         fontWeight: 'bold',
         color: COLORS.white,
-        marginBottom: SPACING.xs,
+        marginBottom: 2,
     },
     userRole: {
-        fontSize: FONT_SIZES.sm,
+        fontSize: FONT_SIZES.md,
         color: 'rgba(255, 255, 255, 0.85)',
         textTransform: 'capitalize',
+    },
+    profileImageSmallContainer: {
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        borderWidth: 2,
+        borderColor: 'rgba(255,255,255,0.5)',
+        overflow: 'hidden',
+    },
+    profileImageSmall: {
+        width: '100%',
+        height: '100%',
+    },
+    placeholderImageSmall: {
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    placeholderTextSmall: {
+        fontSize: 18,
+        color: COLORS.white,
+        fontWeight: 'bold',
+    },
+    serverStatusBanner: {
+        padding: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    statusConnecting: {
+        backgroundColor: '#FFF3E0', // Light Orange
+    },
+    statusOffline: {
+        backgroundColor: '#FFEBEE', // Light Red
+    },
+    serverStatusText: {
+        fontSize: FONT_SIZES.xs,
+        fontWeight: 'bold',
+        color: COLORS.darkGray,
     },
     logoutButton: {
         padding: SPACING.sm,
@@ -380,39 +482,70 @@ const styles = StyleSheet.create({
         marginBottom: SPACING.md,
     },
     menuGrid: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'space-between',
+        flexDirection: 'column',
     },
     menuItem: {
-        width: '48%',
+        width: '100%',
         marginBottom: SPACING.md,
     },
-    menuGradient: {
+    menuShadowLayer: {
         borderRadius: BORDER_RADIUS.lg,
-        padding: SPACING.lg,
+        paddingLeft: 5,
+        paddingBottom: 5,
+        ...SHADOWS.medium,
+    },
+    menuInnerCard: {
+        backgroundColor: COLORS.white,
+        borderRadius: BORDER_RADIUS.lg,
+        padding: SPACING.md,
+        flexDirection: 'row',
         alignItems: 'center',
-        ...SHADOWS.large,
+    },
+    menuIconContainer: {
+        width: 55,
+        height: 55,
+        borderRadius: BORDER_RADIUS.md,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: SPACING.md,
     },
     menuIcon: {
-        fontSize: 40,
-        marginBottom: SPACING.sm,
+        fontSize: 28,
+    },
+    menuTextContainer: {
+        flex: 1,
+        justifyContent: 'center',
     },
     menuTitulo: {
-        fontSize: FONT_SIZES.lg,
+        fontSize: FONT_SIZES.md,
         fontWeight: 'bold',
-        color: COLORS.white,
-        marginBottom: SPACING.xs,
+        color: COLORS.darkGray,
+        marginBottom: 2,
     },
     menuDescripcion: {
         fontSize: FONT_SIZES.sm,
-        color: COLORS.ivory,
+        color: COLORS.gray,
+    },
+    menuArrow: {
+        fontSize: 32,
+        color: COLORS.gray,
+        marginLeft: SPACING.sm,
+        paddingBottom: 4,
     },
     switchContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'flex-end',
-        marginTop: SPACING.sm,
+        justifyContent: 'space-between',
+        marginTop: SPACING.md,
+    },
+    switchInner: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    currentDateText: {
+        color: COLORS.ivory,
+        fontSize: FONT_SIZES.sm,
+        fontWeight: '500',
     },
     switchLabel: {
         color: COLORS.white,
