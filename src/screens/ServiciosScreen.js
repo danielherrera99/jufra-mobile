@@ -165,7 +165,7 @@ const ServiciosScreen = ({ navigation, route }) => {
             >
                 <View style={styles.cardHeader}>
                     <Text style={styles.dateBadge}>
-                        {format(new Date(item.fecha), "d MMM", { locale: es })}
+                        {item.fecha ? format(new Date(item.fecha), "d MMM", { locale: es }) : 'N/A'}
                     </Text>
                     <View style={styles.headerInfo}>
                         <Text style={styles.title}>{item.titulo}</Text>

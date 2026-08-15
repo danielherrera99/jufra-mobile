@@ -114,7 +114,7 @@ const PeticionesScreen = ({ navigation }) => {
                             {item.anonimo ? 'Hermano(a) Anónimo' : `${item.autor?.nombre} ${item.autor?.apellido}`}
                         </Text>
                         <Text style={styles.date}>
-                            {formatDistanceToNow(new Date(item.createdAt), { addSuffix: true, locale: es })}
+                            {item.createdAt ? formatDistanceToNow(new Date(item.createdAt), { addSuffix: true, locale: es }) : ''}
                         </Text>
                     </View>
 

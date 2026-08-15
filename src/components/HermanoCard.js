@@ -37,7 +37,7 @@ const HermanoCard = ({ hermano, usuario, esAdmin, filtroEstado, navigation, onAp
                         ) : (
                             <View style={styles.avatarPlaceholder}>
                                 <Text style={styles.avatarText}>
-                                    {item.nombre[0]}{item.apellido[0]}
+                                    {(item.nombre?.[0] || '')}{(item.apellido?.[0] || '')}
                                 </Text>
                             </View>
                         )}
