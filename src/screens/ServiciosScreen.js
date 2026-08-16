@@ -136,7 +136,7 @@ const ServiciosScreen = ({ navigation, route }) => {
                                             {index + 1}. {p.nombre} {p.apellido}
                                         </Text>
                                         <Text style={styles.participantRole}>
-                                            {p.cargo !== 'ninguno' ? p.cargo : p.etapaFormacion.replace('_', ' ')}
+                                            {p.cargo && p.cargo !== 'ninguno' ? p.cargo : (p.etapaFormacion ? p.etapaFormacion.replace('_', ' ') : 'Hermano')}
                                         </Text>
                                     </View>
                                 ))

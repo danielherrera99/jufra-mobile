@@ -52,7 +52,7 @@ const HermanoCard = ({ hermano, usuario, esAdmin, filtroEstado, navigation, onAp
                         <View style={styles.badges}>
                             <View style={[styles.badge, styles.badgeEtapa]}>
                                 <Text style={styles.badgeText}>
-                                    {item.etapaFormacion.replace('_', ' ')}
+                                    {item.etapaFormacion ? item.etapaFormacion.replace('_', ' ') : 'Hermano'}
                                 </Text>
                             </View>
 

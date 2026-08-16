@@ -97,9 +97,10 @@ const PeticionesScreen = ({ navigation }) => {
     };
 
     const renderItem = ({ item }) => {
-        const yaOro = item.oraciones.some(o => o.usuario === usuario._id);
-        const esAutor = item.autor?._id === usuario._id;
-        const esAdminOCousejo = ['admin', 'consejo'].includes(usuario.rol);
+        const oraciones = item.oraciones || [];
+        const yaOro = usuario && oraciones.some(o => o.usuario === usuario._id);
+        const esAutor = usuario && item.autor?._id === usuario._id;
+        const esAdminOCousejo = usuario && ['admin', 'consejo'].includes(usuario.rol);
 
         return (
             <Card style={styles.card}>
@@ -138,7 +139,7 @@ const PeticionesScreen = ({ navigation }) => {
                     >
                         <Text style={styles.prayIcon}>🙏</Text>
                         <Text style={[styles.prayText, yaOro && styles.prayTextActive]}>
-                            {yaOro ? 'Orando' : 'Orar'} ({item.oraciones.length})
+                            {yaOro ? 'Orando' : 'Orar'} ({oraciones.length})
                         </Text>
                     </TouchableOpacity>
                 </View>
