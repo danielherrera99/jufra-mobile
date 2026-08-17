@@ -115,7 +115,13 @@ const PeticionesScreen = ({ navigation }) => {
                             {item.anonimo ? 'Hermano(a) Anónimo' : `${item.autor?.nombre} ${item.autor?.apellido}`}
                         </Text>
                         <Text style={styles.date}>
-                            {item.createdAt ? formatDistanceToNow(new Date(item.createdAt), { addSuffix: true, locale: es }) : ''}
+                            {item.createdAt ? (() => {
+                                try {
+                                    return formatDistanceToNow(new Date(item.createdAt), { addSuffix: true, locale: es });
+                                } catch (e) {
+                                    return 'Recientemente';
+                                }
+                            })() : ''}
                         </Text>
                     </View>
 

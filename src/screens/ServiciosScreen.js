@@ -7,7 +7,8 @@ import {
     TouchableOpacity,
     ActivityIndicator,
     Alert,
-    Modal
+    Modal,
+    Image
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { format } from 'date-fns';
@@ -129,8 +130,8 @@ const ServiciosScreen = ({ navigation, route }) => {
                     {selectedService && (
                         <ScrollView style={styles.modalBody}>
                             <Text style={styles.serviceTitleModal}>{selectedService.titulo}</Text>
-                            {selectedService.participantes.length > 0 ? (
-                                selectedService.participantes.map((p, index) => (
+                            {(selectedService.participantes || []).length > 0 ? (
+                                (selectedService.participantes || []).map((p, index) => (
                                     <View key={index} style={styles.participantItem}>
                                         <Text style={styles.participantName}>
                                             {index + 1}. {p.nombre} {p.apellido}
@@ -165,7 +166,13 @@ const ServiciosScreen = ({ navigation, route }) => {
             >
                 <View style={styles.cardHeader}>
                     <Text style={styles.dateBadge}>
-                        {item.fecha ? format(new Date(item.fecha), "d MMM", { locale: es }) : 'N/A'}
+                        {item.fecha ? (() => {
+                            try {
+                                return format(new Date(item.fecha), "d MMM", { locale: es });
+                            } catch (e) {
+                                return 'N/A';
+                            }
+                        })() : 'N/A'}
                     </Text>
                     <View style={styles.headerInfo}>
                         <Text style={styles.title}>{item.titulo}</Text>

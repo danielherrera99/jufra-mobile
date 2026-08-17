@@ -56,7 +56,7 @@ const HermanoCard = ({ hermano, usuario, esAdmin, filtroEstado, navigation, onAp
                                 </Text>
                             </View>
 
-                            {item.cargo !== 'ninguno' && (
+                            {item.cargo && item.cargo !== 'ninguno' && (
                                 <View style={[styles.badge, styles.badgeCargo]}>
                                     <Text style={styles.badgeText}>
                                         {item.cargo.replace('_', ' ')}
