@@ -19,6 +19,7 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
 import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 // Attempt to use legacy for downloadAsync if available, otherwise fallback
 let downloadAsync = FileSystem.downloadAsync;
 try {
@@ -94,13 +95,13 @@ const ReporteAsistenciaScreen = ({ navigation }) => {
                 a.remove();
                 window.URL.revokeObjectURL(url);
             } else {
-                const directory = FileSystem.cacheDirectory || FileSystem.documentDirectory;
+                const directory = FileSystem.cacheDirectory || FileSystem.documentDirectory || 'file:///data/user/0/com.herrera99.juframobile/cache/';
                 if (!directory) {
                     throw new Error('Carpeta de sistema inalcanzable (directory is null)');
                 }
                 const fileUri = directory + 'asistencias_' + Date.now() + '.xlsx';
 
-                const downloadRes = await FileSystem.downloadAsync(
+                const downloadRes = await downloadAsync(
                     exportUrl,
                     fileUri,
                     { headers: { 'Authorization': `Bearer ${token}` } }
