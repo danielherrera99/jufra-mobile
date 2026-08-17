@@ -106,7 +106,10 @@ const SolicitudesScreen = () => {
 
         <TouchableOpacity 
           style={styles.whatsappBtn}
-          onPress={() => Linking.openURL(`whatsapp://send?phone=51${item.telefono.replace(/\s+/g, '')}&text=¡Paz y bien ${item.nombre}! Vimos tu solicitud en la página web.`)}
+          onPress={() => {
+            const tel = item.telefono || '';
+            Linking.openURL(`whatsapp://send?phone=51${tel.replace(/\s+/g, '')}&text=¡Paz y bien ${item.nombre}! Vimos tu solicitud en la página web.`);
+          }}
         >
           <Ionicons name="logo-whatsapp" size={20} color={COLORS.white} />
           <Text style={styles.whatsappText}>Contactar: {item.telefono}</Text>

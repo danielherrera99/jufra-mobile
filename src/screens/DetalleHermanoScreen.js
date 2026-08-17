@@ -74,10 +74,10 @@ const DetalleHermanoScreen = ({ navigation, route }) => {
                         <View style={styles.badgesContainer}>
                             <View style={[styles.badge, styles.badgeEtapa]}>
                                 <Text style={styles.badgeText}>
-                                    {hermano.etapaFormacion.replace('_', ' ')}
+                                    {hermano.etapaFormacion ? hermano.etapaFormacion.replace('_', ' ') : 'Hermano'}
                                 </Text>
                             </View>
-                            {hermano.cargo !== 'ninguno' && (
+                            {hermano.cargo && hermano.cargo !== 'ninguno' && (
                                 <View style={[styles.badge, styles.badgeCargo]}>
                                     <Text style={styles.badgeText}>
                                         {hermano.cargo.replace('_', ' ')}
