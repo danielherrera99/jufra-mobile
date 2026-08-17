@@ -19,7 +19,6 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
 import * as FileSystem from 'expo-file-system';
-import * as Sharing from 'expo-sharing';
 // Attempt to use legacy for downloadAsync if available, otherwise fallback
 let downloadAsync = FileSystem.downloadAsync;
 try {
@@ -95,7 +94,7 @@ const ReporteAsistenciaScreen = ({ navigation }) => {
                 a.remove();
                 window.URL.revokeObjectURL(url);
             } else {
-                const directory = FileSystem.cacheDirectory || FileSystem.documentDirectory || 'file:///data/user/0/com.herrera99.juframobile/cache/';
+                const directory = FileSystem.documentDirectory || FileSystem.cacheDirectory || 'file:///data/user/0/host.exp.exponent/cache/';
                 if (!directory) {
                     throw new Error('Carpeta de sistema inalcanzable (directory is null)');
                 }
