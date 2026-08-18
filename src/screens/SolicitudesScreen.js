@@ -26,7 +26,7 @@ const SolicitudesScreen = () => {
   const fetchSolicitudes = async () => {
     try {
       const response = await api.get('/solicitudes');
-      setSolicitudes(response.data.data || []);
+      setSolicitudes(response.data.solicitudes || response.data.data || []);
     } catch (error) {
       console.error(error);
       Alert.alert('Error', 'No se pudieron cargar las solicitudes');
