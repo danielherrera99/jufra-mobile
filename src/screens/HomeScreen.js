@@ -84,22 +84,14 @@ const HomeScreen = ({ navigation }) => {
         },
 
         {
-            id: 'anuncios',
-            titulo: 'Anuncios',
-            icono: '📢',
-            descripcion: 'Noticias',
-            color: '#FF9800', // Naranja consistente
-            screen: 'Anuncios',
+            id: 'novedades',
+            titulo: 'Novedades y Agenda',
+            icono: '📆',
+            descripcion: 'Noticias y Eventos',
+            color: '#FF9800', // Naranja
+            screen: 'Novedades',
         },
 
-        {
-            id: 'calendario',
-            titulo: 'Calendario',
-            icono: '📅',
-            descripcion: 'Eventos',
-            color: '#009688', // Teal
-            screen: 'Calendario',
-        },
         {
             id: 'vidaEspiritual',
             titulo: 'Vida Espiritual',
