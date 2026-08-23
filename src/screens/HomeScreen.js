@@ -100,14 +100,6 @@ const HomeScreen = ({ navigation }) => {
         },
 
         {
-            id: 'formacion',
-            titulo: 'Formación',
-            icono: '📖',
-            descripcion: 'Temas',
-            color: '#673AB7', // Morado
-            screen: 'Formacion',
-        },
-        {
             id: 'calendario',
             titulo: 'Calendario',
             icono: '📅',
@@ -116,20 +108,12 @@ const HomeScreen = ({ navigation }) => {
             screen: 'Calendario',
         },
         {
-            id: 'cancionero',
-            titulo: 'Cancionero',
-            icono: '🎵',
-            descripcion: 'Alabanzas',
-            color: '#E91E63', // Pink
-            screen: 'Cancionero',
-        },
-        {
-            id: 'peticiones',
-            titulo: 'Peticiones',
-            icono: '🙏',
-            descripcion: 'Oración',
-            color: '#2196F3', // Blue
-            screen: 'Peticiones',
+            id: 'vidaEspiritual',
+            titulo: 'Vida Espiritual',
+            icono: '🕊️',
+            descripcion: 'Oración y Formación',
+            color: '#673AB7', // Morado
+            screen: 'VidaEspiritual',
         },
         {
             id: 'administracionWeb',
@@ -154,14 +138,6 @@ const HomeScreen = ({ navigation }) => {
             descripcion: 'Directorio',
             color: '#FF9800', // Orange
             screen: 'Consejo',
-        },
-        {
-            id: 'espiritualidad',
-            titulo: 'Espíritu',
-            icono: '🕊️',
-            descripcion: 'Oración',
-            color: '#607D8B', // Blue Grey
-            screen: 'Espiritualidad',
         },
         {
             id: 'galeria',
