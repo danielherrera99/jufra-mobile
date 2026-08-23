@@ -67,12 +67,12 @@ const HomeScreen = ({ navigation }) => {
 
     const menuItems = [
         {
-            id: 'perfil',
-            titulo: 'Mi Perfil',
-            icono: '👤',
-            descripcion: 'Mis Datos',
+            id: 'misRecursos',
+            titulo: 'Mis Recursos',
+            icono: '🎒',
+            descripcion: 'Perfil y Herramientas',
             color: '#607D8B', // Blue Grey
-            screen: 'Perfil',
+            screen: 'MisRecursos',
         },
         {
             id: 'administracionFraternidad',
@@ -82,14 +82,7 @@ const HomeScreen = ({ navigation }) => {
             color: COLORS.primary,
             screen: 'AdministracionFraternidad',
         },
-        {
-            id: 'asistencia',
-            titulo: 'Asistencia',
-            icono: '📱', // Ícono plano (antes ✅ con sombra)
-            descripcion: 'Control QR',
-            color: '#4CAF50', // Verde consistente
-            screen: 'Asistencia',
-        },
+
         {
             id: 'anuncios',
             titulo: 'Anuncios',
@@ -123,14 +116,7 @@ const HomeScreen = ({ navigation }) => {
             color: '#E91E63', // Pink
             screen: 'AdministracionWeb',
         },
-        {
-            id: 'documentos',
-            titulo: 'Documentos',
-            icono: '📜',
-            descripcion: 'Regla y CCGG',
-            color: '#795548', // Brown
-            screen: 'Documentos',
-        },
+
         {
             id: 'consejo',
             titulo: 'El Consejo',
@@ -163,14 +149,7 @@ const HomeScreen = ({ navigation }) => {
             color: '#3F51B5', // Indigo
             screen: 'Mensajes',
         },
-        {
-            id: 'mapa',
-            titulo: 'Mapa',
-            icono: '🗺️',
-            descripcion: 'Ubicaciones',
-            color: '#FF5722', // Deep Orange
-            screen: 'Mapa',
-        },
+
     ];
 
     return (
