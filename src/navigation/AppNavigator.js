@@ -62,6 +62,7 @@ import AdministracionFraternidadScreen from '../screens/AdministracionFraternida
 import VidaEspiritualScreen from '../screens/VidaEspiritualScreen';
 import MisRecursosScreen from '../screens/MisRecursosScreen';
 import NovedadesScreen from '../screens/NovedadesScreen';
+import VidaFraternaScreen from '../screens/VidaFraternaScreen';
 
 import { COLORS } from '../constants/theme';
 
@@ -143,6 +144,7 @@ const AppNavigator = () => {
                     <Stack.Screen name="VidaEspiritual" component={VidaEspiritualScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="MisRecursos" component={MisRecursosScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="Novedades" component={NovedadesScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="VidaFraterna" component={VidaFraternaScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="RedesSociales" component={RedesSocialesScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="Perfil" component={PerfilScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="EditarPerfil" component={EditarPerfilScreen} options={{ headerShown: false }} />

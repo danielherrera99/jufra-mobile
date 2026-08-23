@@ -110,36 +110,12 @@ const HomeScreen = ({ navigation }) => {
         },
 
         {
-            id: 'consejo',
-            titulo: 'El Consejo',
+            id: 'vidaFraterna',
+            titulo: 'Vida Fraterna',
             icono: '🤝',
-            descripcion: 'Directorio',
-            color: '#FF9800', // Orange
-            screen: 'Consejo',
-        },
-        {
-            id: 'galeria',
-            titulo: 'Galería',
-            icono: '📸',
-            descripcion: 'Recuerdos',
-            color: '#9C27B0', // Purple
-            screen: 'Galeria',
-        },
-        {
-            id: 'servicios',
-            titulo: 'Servicio',
-            icono: '🤲',
-            descripcion: 'Misiones',
-            color: '#8BC34A', // Verde claro
-            screen: 'Servicios',
-        },
-        {
-            id: 'mensajes',
-            titulo: 'Mensajes',
-            icono: '💬',
-            descripcion: 'Chat Interno',
+            descripcion: 'Comunidad y Misión',
             color: '#3F51B5', // Indigo
-            screen: 'Mensajes',
+            screen: 'VidaFraterna',
         },
 
     ];
