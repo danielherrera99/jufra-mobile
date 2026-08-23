@@ -25,11 +25,19 @@ const AdministracionWebScreen = ({ navigation }) => {
         },
         {
             id: 'redesSociales',
-            titulo: 'Redes Sociales',
-            icono: '📱',
-            descripcion: 'Métricas e Impacto Digital',
-            color: '#8B5CF6',
+            titulo: 'Impacto Digital',
+            icono: '📱', 
+            descripcion: 'Métricas de Redes',
+            color: '#1DA1F2', // Twitter Blue / Redes
             screen: 'RedesSociales',
+        },
+        {
+            id: 'asistenteIA',
+            titulo: 'Asistente IA',
+            icono: '🤖', 
+            descripcion: 'Inteligencia Artificial',
+            color: '#009688', // Teal
+            screen: 'AsistenteIA',
         }
     ];
 

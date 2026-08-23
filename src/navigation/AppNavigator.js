@@ -57,6 +57,7 @@ import ChatScreen from '../screens/ChatScreen';
 import ComunicacionScreen from '../screens/ComunicacionScreen';
 import SolicitudesScreen from '../screens/SolicitudesScreen';
 import AdministracionWebScreen from '../screens/AdministracionWebScreen';
+import AsistenteIAScreen from '../screens/AsistenteIAScreen';
 import RedesSocialesScreen from '../screens/RedesSocialesScreen';
 import AdministracionFraternidadScreen from '../screens/AdministracionFraternidadScreen';
 import VidaEspiritualScreen from '../screens/VidaEspiritualScreen';
@@ -140,6 +141,7 @@ const AppNavigator = () => {
                     <Stack.Screen name="Mensajes" component={MensajesScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="Chat" component={ChatScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="AdministracionWeb" component={AdministracionWebScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="AsistenteIA" component={AsistenteIAScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="AdministracionFraternidad" component={AdministracionFraternidadScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="VidaEspiritual" component={VidaEspiritualScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="MisRecursos" component={MisRecursosScreen} options={{ headerShown: false }} />
