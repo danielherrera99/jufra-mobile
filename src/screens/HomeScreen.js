@@ -75,12 +75,12 @@ const HomeScreen = ({ navigation }) => {
             screen: 'Perfil',
         },
         {
-            id: 'hermanos',
-            titulo: 'Hermanos',
-            icono: '👥',
-            descripcion: 'Base de datos',
+            id: 'administracionFraternidad',
+            titulo: 'Admin. Frat.',
+            icono: '🛡️',
+            descripcion: 'Hermanos y Actas',
             color: COLORS.primary,
-            screen: 'Hermanos',
+            screen: 'AdministracionFraternidad',
         },
         {
             id: 'asistencia',
@@ -98,14 +98,7 @@ const HomeScreen = ({ navigation }) => {
             color: '#FF9800', // Naranja consistente
             screen: 'Anuncios',
         },
-        {
-            id: 'actas',
-            titulo: 'Actas',
-            icono: '📋', // Ícono plano (antes 📝 con sombra)
-            descripcion: 'Reuniones',
-            color: '#795548', // Marrón
-            screen: 'Actas',
-        },
+
         {
             id: 'formacion',
             titulo: 'Formación',
@@ -299,8 +292,8 @@ const HomeScreen = ({ navigation }) => {
                 <Text style={styles.sectionTitle}>Módulos</Text>
                 <View style={styles.menuGrid}>
                     {menuItems.map((item) => {
-                        // Restringir módulos Hermanos, Actas, y Admin Web solo al Consejo Activo
-                        if ((item.id === 'hermanos' || item.id === 'actas' || item.id === 'administracionWeb') && !esConsejoActivo) {
+                        // Restringir módulos Admin Fraternidad y Admin Web solo al Consejo Activo
+                        if ((item.id === 'administracionFraternidad' || item.id === 'administracionWeb') && !esConsejoActivo) {
                             return null;
                         }
 
