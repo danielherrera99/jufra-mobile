@@ -277,14 +277,7 @@ const HomeScreen = ({ navigation }) => {
                 }
             >
                 {/* Estadísticas rápidas (Solo Consejo Activo) */}
-                {esConsejoActivo && (
-                    <View style={styles.statsContainer}>
-                        <View style={styles.statCard}>
-                            <Text style={styles.statNumber}>{estadisticas.totalHermanos}</Text>
-                            <Text style={styles.statLabel}>Hermanos Activos</Text>
-                        </View>
-                    </View>
-                )}
+
 
                 {/* Próximos aniversarios */}
                 {estadisticas.proximosAniversarios.length > 0 && (
