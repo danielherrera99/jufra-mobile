@@ -1,32 +1,32 @@
 // Paleta de colores franciscana
 export const COLORS = {
-    // Colores principales
-    primary: '#8B4513', // Marrón franciscano
-    secondary: '#D4A574', // Dorado/Ocre
-    tertiary: '#6B8E23', // Verde oliva
+    // Colores principales (Seraphic Heritage)
+    primary: '#6c2f00', // Marrón terracota
+    secondary: '#9a4600', // Umber (usado como accent antes)
+    tertiary: '#414231', // Verde grisáceo oscuro
 
     // Colores de acento
-    accent: '#E07A5F', // Terracota
-    gold: '#DAA520', // Dorado
+    accent: '#fd8a3e', // Terracota anaranjado (secondary-container)
+    gold: '#934b19', // surface-tint (Tono madera oscuro)
 
     // Neutros
-    white: '#FFFFFF',
-    ivory: '#FFF8DC',
-    cream: '#F5F5DC',
-    lightGray: '#E8E8E8',
-    gray: '#9E9E9E',
-    darkGray: '#424242',
-    black: '#1A1A1A',
+    white: '#ffffff', // surface-container-lowest
+    ivory: '#f0eded', // surface-container
+    cream: '#fbf9f8', // surface (fondo principal)
+    lightGray: '#e4e2e1', // surface-variant
+    gray: '#54433a', // on-surface-variant
+    darkGray: '#1b1c1c', // on-surface
+    black: '#1b1c1c', // Reemplazo de negro puro por on-surface
 
     // Estados
     success: '#4CAF50',
     warning: '#FF9800',
-    error: '#F44336',
+    error: '#ba1a1a', // error
     info: '#2196F3',
 
     // Transparencias
-    overlay: 'rgba(0, 0, 0, 0.5)',
-    shadow: 'rgba(0, 0, 0, 0.15)',
+    overlay: 'rgba(27, 28, 28, 0.5)', // darkGray con opacidad
+    shadow: 'rgba(139, 69, 19, 0.08)', // Ambient Glow suave
 };
 
 // Tipografía
@@ -62,31 +62,31 @@ export const SPACING = {
 export const BORDER_RADIUS = {
     sm: 4,
     md: 8,
-    lg: 12,
-    xl: 16,
+    lg: 16,
+    xl: 24,
     round: 999,
 };
 
-// Sombras
+// Sombras (Soft Brown Ambient Glow)
 export const SHADOWS = {
     small: {
-        shadowColor: '#000',
+        shadowColor: '#8B4513',
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
+        shadowOpacity: 0.08,
         shadowRadius: 4,
         elevation: 2,
     },
     medium: {
-        shadowColor: '#000',
+        shadowColor: '#8B4513',
         shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.15,
+        shadowOpacity: 0.1,
         shadowRadius: 8,
         elevation: 4,
     },
     large: {
-        shadowColor: '#000',
+        shadowColor: '#8B4513',
         shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.2,
+        shadowOpacity: 0.12,
         shadowRadius: 16,
         elevation: 8,
     },
