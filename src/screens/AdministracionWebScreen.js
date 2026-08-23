@@ -22,6 +22,14 @@ const AdministracionWebScreen = ({ navigation }) => {
             descripcion: 'Correos Oficiales y Contacto',
             color: '#00BCD4',
             screen: 'Comunicacion',
+        },
+        {
+            id: 'redesSociales',
+            titulo: 'Redes Sociales',
+            icono: '📱',
+            descripcion: 'Métricas e Impacto Digital',
+            color: '#8B5CF6',
+            screen: 'RedesSociales',
         }
     ];
 

@@ -57,6 +57,7 @@ import ChatScreen from '../screens/ChatScreen';
 import ComunicacionScreen from '../screens/ComunicacionScreen';
 import SolicitudesScreen from '../screens/SolicitudesScreen';
 import AdministracionWebScreen from '../screens/AdministracionWebScreen';
+import RedesSocialesScreen from '../screens/RedesSocialesScreen';
 
 import { COLORS } from '../constants/theme';
 
@@ -134,6 +135,7 @@ const AppNavigator = () => {
                     <Stack.Screen name="Mensajes" component={MensajesScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="Chat" component={ChatScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="AdministracionWeb" component={AdministracionWebScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="RedesSociales" component={RedesSocialesScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="Perfil" component={PerfilScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="EditarPerfil" component={EditarPerfilScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="Hermanos" component={HermanosScreen} options={{ headerShown: false }} />
