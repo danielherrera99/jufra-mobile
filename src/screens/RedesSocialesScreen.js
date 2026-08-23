@@ -101,6 +101,17 @@ const RedesSocialesScreen = ({ navigation }) => {
                     {renderCard('instagram', 'INSTAGRAM (SEGUIDORES)', '#E1306C', '📸', 'seguidores', '📷 Posts', 'Alcance')}
                     {renderCard('youtube', 'YOUTUBE (SUSCRIPTORES)', '#EF4444', '🔴', 'seguidores', '📹 Videos', '👁️ Vistas')}
                     {renderCard('facebook', 'FACEBOOK (SEGUIDORES)', '#3B82F6', '📘', 'seguidores', 'Alcance', 'Interacciones')}
+                    
+                    {/* Tarjeta Web - Solo informativa */}
+                    <View style={[styles.card, { borderLeftColor: '#22C55E', borderLeftWidth: 5 }]}>
+                        <Text style={styles.cardIcon}>🌐</Text>
+                        <View style={styles.cardContent}>
+                            <Text style={styles.cardTitle}>VISITAS WEB (30 DÍAS)</Text>
+                            <Text style={[styles.cardNumber, { color: '#22C55E' }]}>
+                                {metricas?.web?.length > 0 ? metricas.web[metricas.web.length - 1].alcance : 0}
+                            </Text>
+                        </View>
+                    </View>
                 </ScrollView>
             )}
 
