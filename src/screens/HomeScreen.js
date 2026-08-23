@@ -139,12 +139,12 @@ const HomeScreen = ({ navigation }) => {
             screen: 'Peticiones',
         },
         {
-            id: 'solicitudes',
-            titulo: 'Solicitudes Web',
-            icono: '🙋',
-            descripcion: 'Prospectos',
+            id: 'administracionWeb',
+            titulo: 'Admin. Web',
+            icono: '🌐',
+            descripcion: 'Web y Correos',
             color: '#E91E63', // Pink
-            screen: 'Solicitudes',
+            screen: 'AdministracionWeb',
         },
         {
             id: 'documentos',
@@ -201,14 +201,6 @@ const HomeScreen = ({ navigation }) => {
             descripcion: 'Ubicaciones',
             color: '#FF5722', // Deep Orange
             screen: 'Mapa',
-        },
-        {
-            id: 'comunicacion',
-            titulo: 'Comunicación',
-            icono: '📧',
-            descripcion: 'Correos Oficiales',
-            color: '#00BCD4', // Cyan
-            screen: 'Comunicacion',
         },
     ];
 
@@ -314,8 +306,8 @@ const HomeScreen = ({ navigation }) => {
                 <Text style={styles.sectionTitle}>Módulos</Text>
                 <View style={styles.menuGrid}>
                     {menuItems.map((item) => {
-                        // Restringir módulos Hermanos, Actas, Comunicacion y Solicitudes solo al Consejo Activo
-                        if ((item.id === 'hermanos' || item.id === 'actas' || item.id === 'comunicacion' || item.id === 'solicitudes') && !esConsejoActivo) {
+                        // Restringir módulos Hermanos, Actas, y Admin Web solo al Consejo Activo
+                        if ((item.id === 'hermanos' || item.id === 'actas' || item.id === 'administracionWeb') && !esConsejoActivo) {
                             return null;
                         }
 

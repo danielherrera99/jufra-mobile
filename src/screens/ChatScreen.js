@@ -74,7 +74,7 @@ const ChatScreen = ({ route, navigation }) => {
     const renderItem = ({ item }) => {
         // Asegurar comparación correcta de IDs (convertir a string)
         const remitenteId = item.remitente?._id || item.remitente;
-        const miId = usuario?._id;
+        const miId = usuario?.id || usuario?._id;
         const esMio = remitenteId?.toString() === miId?.toString();
 
         return (

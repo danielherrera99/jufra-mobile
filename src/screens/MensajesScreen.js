@@ -47,7 +47,7 @@ const MensajesScreen = ({ navigation }) => {
         const { usuario: otroUsuario, ultimoMensaje } = item;
         // Asegurar comparación correcta de IDs
         const remitenteId = ultimoMensaje.remitente?._id || ultimoMensaje.remitente;
-        const miId = usuario?._id;
+        const miId = usuario?.id || usuario?._id;
         const esMio = remitenteId?.toString() === miId?.toString();
 
         const noLeido = !esMio && !ultimoMensaje.leido;
