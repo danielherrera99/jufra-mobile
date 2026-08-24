@@ -148,14 +148,14 @@ const RedesSocialesScreen = ({ navigation }) => {
                                         {post.imagen_url ? (
                                             <Image source={{ uri: post.imagen_url }} style={styles.postImage} />
                                         ) : (
-                                            <View style={styles.noImagePlaceholder}><Text>Sin Imagen</Text></View>
+                                            <View style={styles.noImagePlaceholder}><Text style={{ color: COLORS.gray }}>Sin Imagen</Text></View>
                                         )}
                                         <Text style={styles.postTitle} numberOfLines={3}>{post.titulo}</Text>
                                         <Text style={styles.postDate}>{formatDate(post.fecha_publicacion)}</Text>
                                         <View style={styles.postStats}>
-                                            <Text>👁️ {post.vistas}</Text>
-                                            <Text>👍 {post.likes}</Text>
-                                            <Text>💬 {post.comentarios}</Text>
+                                            <Text style={styles.statText}>👁️ {post.vistas}</Text>
+                                            <Text style={styles.statText}>👍 {post.likes}</Text>
+                                            <Text style={styles.statText}>💬 {post.comentarios}</Text>
                                         </View>
                                         <TouchableOpacity 
                                             style={styles.openBtn}
@@ -307,6 +307,7 @@ const styles = StyleSheet.create({
     postTitle: {
         fontSize: FONT_SIZES.md,
         fontWeight: 'bold',
+        color: COLORS.darkGray,
         marginBottom: 4,
     },
     postDate: {
@@ -318,6 +319,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginBottom: SPACING.md,
+    },
+    statText: {
+        color: COLORS.darkGray,
+        fontSize: FONT_SIZES.sm,
     },
     openBtn: {
         backgroundColor: COLORS.primary,
