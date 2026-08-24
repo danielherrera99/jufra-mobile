@@ -12,8 +12,9 @@ import {
 } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import api from '../config/api';
-import { COLORS } from '../constants/theme';
+import { COLORS, FONT_SIZES, SPACING, BORDER_RADIUS, SHADOWS } from '../constants/theme';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
@@ -139,10 +140,20 @@ const SolicitudesScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={COLORS.primary} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Solicitudes Web</Text>
+        <LinearGradient
+            colors={[COLORS.primary, COLORS.secondary]}
+            style={styles.headerGradient}
+        >
+            <View style={styles.headerContent}>
+                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                    <Ionicons name="arrow-back" size={24} color={COLORS.white} />
+                </TouchableOpacity>
+                <View style={{ flex: 1, alignItems: 'center', marginRight: 24 }}>
+                    <Text style={styles.headerTitle}>Solicitudes Web</Text>
+                    <Text style={styles.headerSubtitle}>Gestiona prospectos de la web</Text>
+                </View>
+            </View>
+        </LinearGradient>
       </View>
 
       {loading && !refreshing ? (
@@ -172,24 +183,36 @@ const SolicitudesScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: COLORS.cream,
   },
   header: {
+    backgroundColor: COLORS.cream,
+  },
+  headerGradient: {
+    paddingTop: 60,
+    paddingBottom: SPACING.lg,
+    paddingHorizontal: SPACING.lg,
+    borderBottomLeftRadius: BORDER_RADIUS.xl,
+    borderBottomRightRadius: BORDER_RADIUS.xl,
+    ...SHADOWS.medium,
+  },
+  headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 20,
-    paddingTop: 50,
-    backgroundColor: COLORS.white,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
   },
   backButton: {
-    marginRight: 15,
+    marginRight: 10,
+    padding: 5,
   },
   headerTitle: {
-    fontSize: 20,
+    fontSize: FONT_SIZES.xl,
     fontWeight: 'bold',
-    color: COLORS.primary,
+    color: COLORS.white,
+    marginBottom: 2,
+  },
+  headerSubtitle: {
+    fontSize: FONT_SIZES.sm,
+    color: COLORS.ivory,
   },
   listContainer: {
     padding: 15,

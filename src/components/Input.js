@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
         borderRadius: BORDER_RADIUS.md,
         borderWidth: 1,
         borderColor: COLORS.lightGray,
-        height: SIZES.inputHeight,
+        minHeight: SIZES.inputHeight,
         paddingHorizontal: SPACING.md,
     },
     inputFocused: {
@@ -111,9 +111,10 @@ const styles = StyleSheet.create({
         marginLeft: SPACING.xs,
     },
     multiline: {
-        height: 100,
+        minHeight: 100,
         textAlignVertical: 'top',
         paddingTop: SPACING.sm,
+        paddingBottom: SPACING.sm,
     },
     eyeIcon: {
         padding: SPACING.xs,
