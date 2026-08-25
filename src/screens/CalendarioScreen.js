@@ -57,10 +57,35 @@ const CalendarioScreen = ({ navigation, route }) => {
             setRefreshing(false);
         }
     };
-
     const onRefresh = () => {
         setRefreshing(true);
         cargarEventos();
+    };
+
+    const eliminarEvento = (id) => {
+        Alert.alert(
+            "Eliminar Evento",
+            "¿Estás seguro de que deseas eliminar este evento?",
+            [
+                { text: "Cancelar", style: "cancel" },
+                { 
+                    text: "Eliminar", 
+                    style: "destructive",
+                    onPress: async () => {
+                        try {
+                            const response = await api.delete(`/eventos/${id}`);
+                            if (response.data.success) {
+                                Alert.alert("Éxito", "Evento eliminado correctamente");
+                                cargarEventos();
+                            }
+                        } catch (error) {
+                            console.error("Error al eliminar evento:", error);
+                            Alert.alert("Error", "No se pudo eliminar el evento");
+                        }
+                    }
+                }
+            ]
+        );
     };
 
     const renderItem = ({ item }) => (
