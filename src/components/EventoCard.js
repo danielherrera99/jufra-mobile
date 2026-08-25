@@ -59,13 +59,17 @@ const programarRecordatorio = async (evento) => {
             return;
         }
 
+        const seconds = Math.floor((trigger.getTime() - Date.now()) / 1000);
+
         await Notifications.scheduleNotificationAsync({
             content: {
                 title: `Recordatorio: ${evento.titulo}`,
                 body: `Tu evento comienza en 1 hora en ${evento.lugar || 'el lugar asignado'}.`,
                 data: { eventoId: evento._id },
             },
-            trigger,
+            trigger: {
+                seconds: seconds,
+            },
         });
 
         Alert.alert('Recordatorio Programado', 'Te avisaremos 1 hora antes del evento.');
