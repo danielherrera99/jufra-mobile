@@ -8,7 +8,8 @@ import {
     TouchableOpacity,
     Platform,
     Image,
-    ActivityIndicator
+    ActivityIndicator,
+    Switch
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Picker } from '@react-native-picker/picker';
@@ -29,6 +30,8 @@ const EditarEventoScreen = ({ navigation, route }) => {
     const [tipo, setTipo] = useState('reunion');
     const [fecha, setFecha] = useState(new Date());
     const [hora, setHora] = useState(new Date());
+    const [visibilidad, setVisibilidad] = useState('todos');
+    const [publicarWeb, setPublicarWeb] = useState(false);
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [showTimePicker, setShowTimePicker] = useState(false);
     const [imagen, setImagen] = useState(null);
@@ -73,6 +76,8 @@ const EditarEventoScreen = ({ navigation, route }) => {
                     setLugar(eventoEncontrado.lugar || '');
                     setTipo(eventoEncontrado.tipo);
                     setFecha(new Date(eventoEncontrado.fecha));
+                    setVisibilidad(eventoEncontrado.visibilidad || 'todos');
+                    setPublicarWeb(eventoEncontrado.publicar_web || false);
 
                     if (eventoEncontrado.hora) {
                         const [h, m] = eventoEncontrado.hora.split(':');
@@ -157,6 +162,8 @@ const EditarEventoScreen = ({ navigation, route }) => {
             formData.append('tipo', tipo);
             formData.append('fecha', fechaEvento.toISOString());
             formData.append('hora', horaString);
+            formData.append('visibilidad', visibilidad);
+            formData.append('publicar_web', publicarWeb ? 'true' : 'false');
 
             if (imagen) {
                 const fileName = imagen.uri.split('/').pop();
@@ -230,8 +237,34 @@ const EditarEventoScreen = ({ navigation, route }) => {
                             <Picker.Item label="Formación" value="formacion" />
                             <Picker.Item label="Retiro" value="retiro" />
                             <Picker.Item label="Fraternidad" value="fraternidad" />
-                            <Picker.Item label="Otro" value="otro" />
+                            <Picker.Item color="#1A1A1A" label="Otro" value="otro" />
                         </Picker>
+                    </View>
+
+                    <Text style={styles.label}>📍 Visibilidad</Text>
+                    <View style={[styles.pickerContainer, { borderColor: COLORS.primary, borderWidth: 2 }]}>
+                        <Picker
+                            selectedValue={visibilidad}
+                            onValueChange={(itemValue) => setVisibilidad(itemValue)}
+                            style={[styles.picker, { color: '#1A1A1A' }]}
+                            dropdownIconColor="#424242"
+                        >
+                            <Picker.Item color="#1A1A1A" label="🔄 Ambos (App y Web)" value="todos" />
+                            <Picker.Item color="#1A1A1A" label="📱 Solo App (Interno)" value="app" />
+                            <Picker.Item color="#1A1A1A" label="🌐 Solo Web (Público)" value="web" />
+                        </Picker>
+                    </View>
+
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 15, paddingHorizontal: 5 }}>
+                        <Switch
+                            trackColor={{ false: '#767577', true: COLORS.primary }}
+                            thumbColor={publicarWeb ? '#fff' : '#f4f3f4'}
+                            onValueChange={setPublicarWeb}
+                            value={publicarWeb}
+                        />
+                        <Text style={[styles.label, { marginBottom: 0, marginLeft: 10, flex: 1 }]}>
+                            🌐 Publicar en Web (Aparecerá en "Próximos Encuentros")
+                        </Text>
                     </View>
 
                     <Text style={styles.label}>Fecha</Text>
