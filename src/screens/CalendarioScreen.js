@@ -34,7 +34,7 @@ const CalendarioScreen = ({ navigation, route }) => {
 
     const cargarEventos = async () => {
         try {
-            const response = await api.get('/eventos');
+            const response = await api.get('/eventos', { params: { visibilidad: 'app' } });
             if (response.data.success) {
                 const fetchedEventos = response.data.eventos;
                 setEventos(fetchedEventos);

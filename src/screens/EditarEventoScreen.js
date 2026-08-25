@@ -64,7 +64,7 @@ const EditarEventoScreen = ({ navigation, route }) => {
             // pero la mejor práctica es volver a cargar.
 
             // Voy a implementar GET /:id en el backend.
-            const response = await api.get(`/eventos`); // Temporalmente traer todos y buscar
+            const response = await api.get(`/eventos`, { params: { visibilidad: 'app' } }); // Temporalmente traer todos y buscar
             if (response.data.success) {
                 const eventoEncontrado = response.data.eventos.find(e => e._id === eventoId);
                 if (eventoEncontrado) {

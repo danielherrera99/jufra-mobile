@@ -72,7 +72,7 @@ const MapaScreen = ({ navigation, route }) => {
     const cargarDatos = async () => {
         try {
             const [eventosRes, anunciosRes, serviciosRes] = await Promise.all([
-                api.get('/eventos'),
+                api.get('/eventos', { params: { visibilidad: 'app' } }),
                 api.get('/anuncios'),
                 api.get('/servicios')
             ]);

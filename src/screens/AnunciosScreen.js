@@ -40,7 +40,7 @@ const AnunciosScreen = ({ navigation }) => {
 
     const cargarAnuncios = async () => {
         try {
-            const params = filtroTipo !== 'todos' ? { tipo: filtroTipo } : {};
+            const params = filtroTipo !== 'todos' ? { tipo: filtroTipo, destinatarios: 'app' } : { destinatarios: 'app' };
             const response = await api.get('/anuncios', { params });
 
             if (response.data.success) {
