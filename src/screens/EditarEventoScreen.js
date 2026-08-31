@@ -38,6 +38,13 @@ const EditarEventoScreen = ({ navigation, route }) => {
     const [imagenActual, setImagenActual] = useState(null);
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(true);
+    const [ubicacion, setUbicacion] = useState(null);
+
+    React.useEffect(() => {
+        if (route.params?.pickedLocation) {
+            setUbicacion(route.params.pickedLocation);
+        }
+    }, [route.params?.pickedLocation]);
 
     useEffect(() => {
         cargarEvento();
@@ -85,6 +92,13 @@ const EditarEventoScreen = ({ navigation, route }) => {
                         dateHora.setHours(h);
                         dateHora.setMinutes(m);
                         setHora(dateHora);
+                    }
+
+                    if (eventoEncontrado.ubicacion && eventoEncontrado.ubicacion.lat && eventoEncontrado.ubicacion.lng) {
+                        setUbicacion({
+                            latitude: eventoEncontrado.ubicacion.lat,
+                            longitude: eventoEncontrado.ubicacion.lng
+                        });
                     }
 
                     setImagenActual(eventoEncontrado.imagenUrl);
@@ -164,6 +178,11 @@ const EditarEventoScreen = ({ navigation, route }) => {
             formData.append('hora', horaString);
             formData.append('visibilidad', visibilidad);
             formData.append('publicar_web', publicarWeb ? 'true' : 'false');
+
+            if (ubicacion) {
+                formData.append('lat', ubicacion.latitude.toString());
+                formData.append('lng', ubicacion.longitude.toString());
+            }
 
             if (imagen) {
                 const fileName = imagen.uri.split('/').pop();
@@ -309,6 +328,15 @@ const EditarEventoScreen = ({ navigation, route }) => {
                         value={lugar}
                         onChangeText={setLugar}
                     />
+
+                    <TouchableOpacity
+                        style={styles.mapButton}
+                        onPress={() => navigation.navigate('SeleccionarUbicacion', { returnScreen: 'EditarEvento' })}
+                    >
+                        <Text style={styles.mapButtonText}>
+                            {ubicacion ? '📍 Ubicación Seleccionada' : '🗺️ Seleccionar en Mapa'}
+                        </Text>
+                    </TouchableOpacity>
 
                     <Text style={styles.label}>Descripción (Opcional)</Text>
                     <Input
@@ -468,6 +496,20 @@ const styles = StyleSheet.create({
     },
     submitButton: {
         marginTop: SPACING.xl,
+        marginBottom: SPACING.xl,
+    },
+    mapButton: {
+        backgroundColor: COLORS.tertiary,
+        padding: SPACING.md,
+        borderRadius: BORDER_RADIUS.md,
+        alignItems: 'center',
+        marginTop: SPACING.sm,
+        marginBottom: SPACING.md,
+    },
+    mapButtonText: {
+        color: COLORS.white,
+        fontWeight: 'bold',
+        fontSize: FONT_SIZES.md,
     },
 });
 

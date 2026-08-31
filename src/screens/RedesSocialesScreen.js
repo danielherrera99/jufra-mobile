@@ -4,7 +4,14 @@ import {
     ActivityIndicator, Modal, Image, Linking 
 } from 'react-native';
 import { COLORS, SPACING, FONT_SIZES, BORDER_RADIUS } from '../constants/theme';
-import api from '../config/api';
+import api, { API_URL } from '../config/api';
+
+const getImageUrl = (url) => {
+    if (!url) return null;
+    if (url.startsWith('http')) return url;
+    let baseUrl = API_URL.replace('/api', '');
+    return `${baseUrl}${url}`;
+};
 
 const RedesSocialesScreen = ({ navigation }) => {
     const [metricas, setMetricas] = useState(null);
@@ -146,7 +153,7 @@ const RedesSocialesScreen = ({ navigation }) => {
                                 {posts.map(post => (
                                     <View key={post.post_id} style={styles.postItem}>
                                         {post.imagen_url ? (
-                                            <Image source={{ uri: post.imagen_url }} style={styles.postImage} />
+                                            <Image source={{ uri: getImageUrl(post.imagen_url) }} style={styles.postImage} />
                                         ) : (
                                             <View style={styles.noImagePlaceholder}><Text style={{ color: COLORS.gray }}>Sin Imagen</Text></View>
                                         )}
