@@ -64,6 +64,8 @@ import VidaEspiritualScreen from '../screens/VidaEspiritualScreen';
 import MisRecursosScreen from '../screens/MisRecursosScreen';
 import NovedadesScreen from '../screens/NovedadesScreen';
 import VidaFraternaScreen from '../screens/VidaFraternaScreen';
+import FinanzasScreen from '../screens/FinanzasScreen';
+import RegistrosMascotasAdminScreen from '../screens/RegistrosMascotasAdminScreen';
 
 import { COLORS } from '../constants/theme';
 
@@ -148,6 +150,7 @@ const AppNavigator = () => {
                     <Stack.Screen name="Novedades" component={NovedadesScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="VidaFraterna" component={VidaFraternaScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="RedesSociales" component={RedesSocialesScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="Finanzas" component={FinanzasScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="Perfil" component={PerfilScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="EditarPerfil" component={EditarPerfilScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="Hermanos" component={HermanosScreen} options={{ headerShown: false }} />
@@ -156,6 +159,7 @@ const AppNavigator = () => {
                     <Stack.Screen name="SeleccionarUbicacion" component={SeleccionarUbicacionScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="Comunicacion" component={ComunicacionScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="Solicitudes" component={SolicitudesScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="RegistrosMascotasAdmin" component={RegistrosMascotasAdminScreen} options={{ headerShown: false }} />
                 </Stack.Navigator>
             )}
         </NavigationContainer>

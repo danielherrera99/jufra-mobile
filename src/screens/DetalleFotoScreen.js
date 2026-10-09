@@ -10,10 +10,33 @@ import {
     ScrollView
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Video, ResizeMode } from 'expo-av';
+import Constants from 'expo-constants';
 import { useAuth } from '../context/AuthContext';
 import api from '../config/api';
 import { COLORS, FONT_SIZES, SPACING, BORDER_RADIUS } from '../constants/theme';
+
+const isExpoGo = Constants.appOwnership === 'expo' || Constants.executionEnvironment === 'storeClient';
+
+let Video, ResizeMode;
+if (!isExpoGo) {
+    try {
+        const av = require('expo-av');
+        Video = av.Video;
+        ResizeMode = av.ResizeMode;
+    } catch (e) {
+        console.log('expo-av not available');
+    }
+}
+
+// Componente fallback para Expo Go
+const VideoFallback = ({ style }) => (
+    <View style={[style, { backgroundColor: '#111', justifyContent: 'center', alignItems: 'center' }]}>
+        <Text style={{ color: 'white', textAlign: 'center', fontSize: 16 }}>
+            🎬{'\n'}La reproducción de vídeo{'\n'}no está disponible en Expo Go.
+        </Text>
+    </View>
+);
+
 
 const { width, height } = Dimensions.get('window');
 
@@ -74,13 +97,17 @@ const DetalleFotoScreen = ({ route, navigation }) => {
 
             <View style={styles.mediaContainer}>
                 {item.tipoArchivo === 'video' ? (
-                    <Video
-                        style={styles.media}
-                        source={{ uri: item.archivoUrl }}
-                        useNativeControls
-                        resizeMode={ResizeMode.CONTAIN}
-                        isLooping
-                    />
+                    Video ? (
+                        <Video
+                            style={styles.media}
+                            source={{ uri: item.archivoUrl }}
+                            useNativeControls
+                            resizeMode={ResizeMode.CONTAIN}
+                            isLooping
+                        />
+                    ) : (
+                        <VideoFallback style={styles.media} />
+                    )
                 ) : (
                     <Image
                         source={{ uri: item.archivoUrl }}

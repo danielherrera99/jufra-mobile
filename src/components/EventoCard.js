@@ -2,7 +2,18 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native';
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
-import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
+
+let Notifications;
+const isExpoGo = Constants.appOwnership === 'expo' || Constants.executionEnvironment === 'storeClient';
+if (!isExpoGo) {
+  try {
+    Notifications = require('expo-notifications');
+  } catch (e) {
+    console.log('Failed to load expo-notifications in EventoCard');
+  }
+}
+
 import Card from './Card';
 import { COLORS, FONT_SIZES, SPACING, BORDER_RADIUS } from '../constants/theme';
 import { API_URL } from '../config/api';
@@ -39,6 +50,11 @@ const getColorEvento = (tipo) => {
 
 const programarRecordatorio = async (evento) => {
     try {
+        if (!Notifications) {
+            Alert.alert('No soportado', 'Los recordatorios no están soportados en Expo Go.');
+            return;
+        }
+
         const { status } = await Notifications.requestPermissionsAsync();
         if (status !== 'granted') {
             Alert.alert('Permiso denegado', 'No podemos enviar notificaciones sin tu permiso');

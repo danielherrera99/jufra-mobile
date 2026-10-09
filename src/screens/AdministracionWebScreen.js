@@ -38,6 +38,14 @@ const AdministracionWebScreen = ({ navigation }) => {
             descripcion: 'Inteligencia Artificial',
             color: '#009688', // Teal
             screen: 'AsistenteIA',
+        },
+        {
+            id: 'registrosMascotas',
+            titulo: 'Mascotas',
+            icono: '🐶',
+            descripcion: 'Bendición de Mascotas',
+            color: '#FF9800',
+            screen: 'RegistrosMascotasAdmin',
         }
     ];
 

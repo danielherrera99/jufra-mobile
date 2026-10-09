@@ -24,6 +24,14 @@ const AdministracionFraternidadScreen = ({ navigation }) => {
             descripcion: 'Reuniones',
             color: '#795548', // Marrón
             screen: 'Actas',
+        },
+        {
+            id: 'finanzas',
+            titulo: 'Finanzas',
+            icono: '💰',
+            descripcion: 'Tesorería',
+            color: '#4CAF50',
+            screen: 'Finanzas',
         }
     ];
 
