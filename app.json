@@ -11,12 +11,6 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": false,
-    "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
     "ios": {
       "supportsTablet": true
     },
@@ -25,7 +19,6 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true,
       "package": "com.herrera99.juframobile",
       "googleServicesFile": "./google-services.json"
     },
@@ -41,7 +34,18 @@
       "expo-notifications",
       "@react-native-community/datetimepicker",
       "expo-sharing",
-      "expo-status-bar"
+      "expo-status-bar",
+      "expo-video",
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ]
     ],
     "runtimeVersion": {
       "policy": "appVersion"

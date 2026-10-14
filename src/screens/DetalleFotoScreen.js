@@ -11,31 +11,28 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Constants from 'expo-constants';
+import { useVideoPlayer, VideoView } from 'expo-video';
 import { useAuth } from '../context/AuthContext';
 import api from '../config/api';
 import { COLORS, FONT_SIZES, SPACING, BORDER_RADIUS } from '../constants/theme';
 
-const isExpoGo = Constants.appOwnership === 'expo' || Constants.executionEnvironment === 'storeClient';
+const VideoPlayerComponent = ({ uri, style }) => {
+    const player = useVideoPlayer(uri, (p) => {
+        p.loop = true;
+        p.play();
+    });
 
-let Video, ResizeMode;
-if (!isExpoGo) {
-    try {
-        const av = require('expo-av');
-        Video = av.Video;
-        ResizeMode = av.ResizeMode;
-    } catch (e) {
-        console.log('expo-av not available');
-    }
-}
-
-// Componente fallback para Expo Go
-const VideoFallback = ({ style }) => (
-    <View style={[style, { backgroundColor: '#111', justifyContent: 'center', alignItems: 'center' }]}>
-        <Text style={{ color: 'white', textAlign: 'center', fontSize: 16 }}>
-            🎬{'\n'}La reproducción de vídeo{'\n'}no está disponible en Expo Go.
-        </Text>
-    </View>
-);
+    return (
+        <VideoView
+            style={style}
+            player={player}
+            allowsFullscreen
+            allowsPictureInPicture
+            contentFit="contain"
+            nativeControls={true}
+        />
+    );
+};
 
 
 const { width, height } = Dimensions.get('window');
@@ -97,17 +94,7 @@ const DetalleFotoScreen = ({ route, navigation }) => {
 
             <View style={styles.mediaContainer}>
                 {item.tipoArchivo === 'video' ? (
-                    Video ? (
-                        <Video
-                            style={styles.media}
-                            source={{ uri: item.archivoUrl }}
-                            useNativeControls
-                            resizeMode={ResizeMode.CONTAIN}
-                            isLooping
-                        />
-                    ) : (
-                        <VideoFallback style={styles.media} />
-                    )
+                    <VideoPlayerComponent uri={item.archivoUrl} style={styles.media} />
                 ) : (
                     <Image
                         source={{ uri: item.archivoUrl }}
