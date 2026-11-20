@@ -21,13 +21,23 @@ const api = axios.create({
     },
 });
 
-// Interceptor para agregar token a las peticiones
+// Interceptor para agregar token y fraternidadId a las peticiones
 api.interceptors.request.use(
     async (config) => {
         const token = await AsyncStorage.getItem('token');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
+        
+        // Inyectar fraternidadId activa si está guardada y no viene en los params
+        const fraternidadId = await AsyncStorage.getItem('fraternidad_id');
+        if (fraternidadId && !config.params?.fraternidadId) {
+            config.params = {
+                ...config.params,
+                fraternidadId: fraternidadId
+            };
+        }
+        
         return config;
     },
     (error) => {

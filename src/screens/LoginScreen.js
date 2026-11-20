@@ -77,7 +77,7 @@ const LoginScreen = ({ navigation }) => {
                                 resizeMode="contain"
                             />
                         </View>
-                        <Text style={styles.title}>JUFRA POMALCA</Text>
+                        <Text style={styles.title}>JUFRA PERÚ</Text>
                         <Text style={styles.subtitle}>Juventud Franciscana</Text>
                         <Text style={styles.motto}>"Paz y Bien"</Text>
                     </View>

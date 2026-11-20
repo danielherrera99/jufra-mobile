@@ -85,8 +85,12 @@ export const AuthProvider = ({ children }) => {
             const recordar = await AsyncStorage.getItem('recordarSesion');
 
             if (tokenGuardado && usuarioGuardado) {
+                const userObj = JSON.parse(usuarioGuardado);
                 setToken(tokenGuardado);
-                setUsuario(JSON.parse(usuarioGuardado));
+                setUsuario(userObj);
+                if (userObj.fraternidadId) {
+                    await AsyncStorage.setItem('fraternidad_id', userObj.fraternidadId);
+                }
                 if (recordar === 'true') {
                     setRecordarSesion(true);
                 }
@@ -118,6 +122,9 @@ export const AuthProvider = ({ children }) => {
                 // Guardar en AsyncStorage
                 await AsyncStorage.setItem('token', token);
                 await AsyncStorage.setItem('usuario', JSON.stringify(usuario));
+                if (usuario.fraternidadId) {
+                    await AsyncStorage.setItem('fraternidad_id', usuario.fraternidadId);
+                }
                 if (rememberMe) {
                     await AsyncStorage.setItem('recordarSesion', 'true');
                     setRecordarSesion(true);
@@ -174,6 +181,7 @@ export const AuthProvider = ({ children }) => {
             await AsyncStorage.removeItem('token');
             await AsyncStorage.removeItem('usuario');
             await AsyncStorage.removeItem('recordarSesion');
+            await AsyncStorage.removeItem('fraternidad_id');
 
             // Limpiar estado
             setToken(null);
@@ -188,6 +196,9 @@ export const AuthProvider = ({ children }) => {
         try {
             const usuarioActualizado = { ...usuario, ...datosActualizados };
             await AsyncStorage.setItem('usuario', JSON.stringify(usuarioActualizado));
+            if (usuarioActualizado.fraternidadId) {
+                await AsyncStorage.setItem('fraternidad_id', usuarioActualizado.fraternidadId);
+            }
             setUsuario(usuarioActualizado);
         } catch (error) {
             console.error('Error al actualizar usuario:', error);
@@ -196,13 +207,21 @@ export const AuthProvider = ({ children }) => {
 
     const [modoConsejo, setModoConsejo] = useState(true);
 
+    const esSuperAdmin = usuario && (
+        usuario.isSuperAdmin ||
+        usuario.rol === 'superadmin' ||
+        usuario.rol === 'admin_nacional'
+    );
+
     const esConsejoReal = usuario && (
+        usuario.rol === 'superadmin' ||
+        usuario.rol === 'admin_nacional' ||
         usuario.rol === 'admin' ||
         usuario.rol === 'consejo' ||
         ['coordinador', 'vice-coordinador', 'secretario', 'tesorero', 'formador', 'animador'].includes(usuario.cargo)
     );
 
-    const esConsejoActivo = esConsejoReal && modoConsejo;
+    const esConsejoActivo = (esConsejoReal && modoConsejo) || esSuperAdmin;
 
     const toggleModoConsejo = () => {
         setModoConsejo(prev => !prev);
@@ -218,6 +237,7 @@ export const AuthProvider = ({ children }) => {
         logout,
         actualizarUsuario,
         estaAutenticado: !!token,
+        esSuperAdmin,
         esConsejoReal,
         esConsejoActivo,
         modoConsejo,

@@ -18,11 +18,11 @@ import { useAuth } from '../context/AuthContext';
 
 const DetalleActaScreen = ({ route, navigation }) => {
     const { actaId } = route.params;
-    const { usuario } = useAuth();
+    const { usuario, esConsejoReal } = useAuth();
     const [acta, setActa] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    const esConsejo = usuario && ['coordinador', 'vice-coordinador', 'secretario', 'tesorero', 'formador', 'admin'].includes(usuario.cargo);
+    const esConsejo = esConsejoReal;
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {

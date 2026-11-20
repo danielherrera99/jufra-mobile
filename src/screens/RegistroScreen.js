@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     View,
     Text,
@@ -8,12 +8,16 @@ import {
     ScrollView,
     Alert,
     TouchableOpacity,
-    Linking
+    Linking,
+    Modal,
+    FlatList,
+    TextInput
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useAuth } from '../context/AuthContext';
+import api from '../config/api';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import { COLORS, FONT_SIZES, SPACING, BORDER_RADIUS } from '../constants/theme';
@@ -35,6 +39,32 @@ const RegistroScreen = ({ navigation }) => {
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
+
+    // Fraternidades
+    const [fraternidades, setFraternidades] = useState([]);
+    const [selectedFrat, setSelectedFrat] = useState({
+        id: '00000000-6a0f-b53a-d327-e42a6db2faf7',
+        nombre: 'JUFRA Pomalca',
+        departamento: 'Lambayeque'
+    });
+    const [showFratModal, setShowFratModal] = useState(false);
+    const [filtroFrat, setFiltroFrat] = useState('');
+
+    useEffect(() => {
+        const cargarFraternidades = async () => {
+            try {
+                const res = await api.get('/fraternidades');
+                if (res.data?.data && Array.isArray(res.data.data)) {
+                    setFraternidades(res.data.data);
+                    const pomalca = res.data.data.find(f => f.id === '00000000-6a0f-b53a-d327-e42a6db2faf7');
+                    if (pomalca) setSelectedFrat(pomalca);
+                }
+            } catch (e) {
+                console.log('Error al cargar fraternidades:', e);
+            }
+        };
+        cargarFraternidades();
+    }, []);
 
     const handleChange = (campo, valor) => {
         setFormData({ ...formData, [campo]: valor });
@@ -109,6 +139,7 @@ const RegistroScreen = ({ navigation }) => {
 
         // Formatear fecha para enviar solo YYYY-MM-DD o ISO string
         datosRegistro.fechaNacimiento = datosRegistro.fechaNacimiento.toISOString();
+        datosRegistro.fraternidadId = selectedFrat?.id || '00000000-6a0f-b53a-d327-e42a6db2faf7';
 
         const resultado = await registro(datosRegistro);
         setLoading(false);
@@ -248,6 +279,31 @@ const RegistroScreen = ({ navigation }) => {
                             icon={<Text style={styles.inputIcon}>📱</Text>}
                         />
 
+                        {/* Fraternidad JUFRA */}
+                        <Text style={[styles.sectionTitle, { marginTop: SPACING.md }]}>Tu Fraternidad</Text>
+                        <View style={styles.divider} />
+
+                        <View style={styles.dateContainer}>
+                            <Text style={styles.dateLabel}>Selecciona tu fraternidad en Perú</Text>
+                            <TouchableOpacity
+                                onPress={() => setShowFratModal(true)}
+                                style={[styles.dateButton, { justifyContent: 'space-between' }]}
+                            >
+                                <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+                                    <Text style={styles.inputIcon}>📍</Text>
+                                    <View style={{ marginLeft: 6, flex: 1 }}>
+                                        <Text style={[styles.dateText, { fontWeight: 'bold', color: COLORS.primary }]}>
+                                            {selectedFrat?.nombre || 'JUFRA Pomalca'}
+                                        </Text>
+                                        <Text style={{ fontSize: 11, color: COLORS.darkGray, marginLeft: SPACING.sm }}>
+                                            {selectedFrat?.departamento || selectedFrat?.zona || 'Perú'}
+                                        </Text>
+                                    </View>
+                                </View>
+                                <Text style={{ color: COLORS.primary, fontWeight: 'bold', fontSize: 13 }}>Cambiar ▼</Text>
+                            </TouchableOpacity>
+                        </View>
+
                         <Text style={[styles.sectionTitle, { marginTop: SPACING.md }]}>Información de la Cuenta</Text>
                         <View style={styles.divider} />
 
@@ -312,6 +368,77 @@ const RegistroScreen = ({ navigation }) => {
                     </View>
                 </ScrollView>
             </LinearGradient>
+
+            {/* Modal para selección de fraternidad */}
+            <Modal
+                visible={showFratModal}
+                animationType="slide"
+                transparent={true}
+                onRequestClose={() => setShowFratModal(false)}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContainer}>
+                        <View style={styles.modalHeader}>
+                            <Text style={styles.modalTitle}>Selecciona tu Fraternidad 🇵🇪</Text>
+                            <TouchableOpacity onPress={() => setShowFratModal(false)} style={styles.closeModalBtn}>
+                                <Text style={{ fontSize: 18, fontWeight: 'bold' }}>✕</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        <View style={styles.searchModalBox}>
+                            <Text style={{ marginRight: 6 }}>🔍</Text>
+                            <TextInput
+                                placeholder="Buscar por ciudad o nombre..."
+                                value={filtroFrat}
+                                onChangeText={setFiltroFrat}
+                                style={{ flex: 1, paddingVertical: 6 }}
+                            />
+                            {filtroFrat ? (
+                                <TouchableOpacity onPress={() => setFiltroFrat('')}>
+                                    <Text style={{ color: COLORS.gray, paddingHorizontal: 4 }}>✕</Text>
+                                </TouchableOpacity>
+                            ) : null}
+                        </View>
+
+                        <FlatList
+                            data={fraternidades.filter(f => {
+                                if (!filtroFrat) return true;
+                                const q = filtroFrat.toLowerCase();
+                                return (f.nombre?.toLowerCase().includes(q) || f.departamento?.toLowerCase().includes(q) || f.zona?.toLowerCase().includes(q));
+                            })}
+                            keyExtractor={(item) => item.id || item._id}
+                            renderItem={({ item }) => {
+                                const isSelected = selectedFrat?.id === item.id;
+                                return (
+                                    <TouchableOpacity
+                                        style={[styles.fratItem, isSelected && styles.fratItemSelected]}
+                                        onPress={() => {
+                                            setSelectedFrat(item);
+                                            setShowFratModal(false);
+                                            setFiltroFrat('');
+                                        }}
+                                    >
+                                        <Text style={{ fontSize: 20 }}>{isSelected ? '✅' : '📍'}</Text>
+                                        <View style={{ marginLeft: 10, flex: 1 }}>
+                                            <Text style={[styles.fratItemTitle, isSelected && { color: COLORS.primary, fontWeight: 'bold' }]}>
+                                                {item.nombre}
+                                            </Text>
+                                            <Text style={styles.fratItemSub}>
+                                                {item.departamento || 'Perú'} • {item.zona ? item.zona.replace('_', ' ').toUpperCase() : ''}
+                                            </Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                );
+                            }}
+                            ListEmptyComponent={
+                                <View style={{ padding: 20, alignItems: 'center' }}>
+                                    <Text style={{ color: COLORS.gray }}>No se encontraron fraternidades</Text>
+                                </View>
+                            }
+                        />
+                    </View>
+                </View>
+            </Modal>
         </KeyboardAvoidingView>
     );
 };
@@ -442,6 +569,64 @@ const styles = StyleSheet.create({
         color: COLORS.white,
         fontWeight: 'bold',
         fontSize: FONT_SIZES.md,
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.55)',
+        justifyContent: 'flex-end',
+    },
+    modalContainer: {
+        backgroundColor: COLORS.white,
+        borderTopLeftRadius: 24,
+        borderTopRightRadius: 24,
+        padding: SPACING.lg,
+        maxHeight: '80%',
+    },
+    modalHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: SPACING.md,
+    },
+    modalTitle: {
+        fontSize: FONT_SIZES.lg,
+        fontWeight: 'bold',
+        color: COLORS.primary,
+    },
+    closeModalBtn: {
+        padding: 6,
+    },
+    searchModalBox: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: COLORS.offWhite,
+        borderRadius: BORDER_RADIUS.md,
+        paddingHorizontal: SPACING.sm,
+        borderWidth: 1,
+        borderColor: COLORS.lightGray,
+        marginBottom: SPACING.md,
+    },
+    fratItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: SPACING.sm + 4,
+        paddingHorizontal: SPACING.sm,
+        borderBottomWidth: 1,
+        borderBottomColor: '#F0F0F0',
+        borderRadius: 8,
+    },
+    fratItemSelected: {
+        backgroundColor: 'rgba(180, 83, 9, 0.08)',
+    },
+    fratItemTitle: {
+        fontSize: FONT_SIZES.md,
+        color: COLORS.black,
+        fontWeight: '600',
+    },
+    fratItemSub: {
+        fontSize: FONT_SIZES.xs,
+        color: COLORS.darkGray,
+        marginTop: 2,
     }
 });
 

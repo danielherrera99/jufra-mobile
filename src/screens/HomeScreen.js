@@ -142,12 +142,19 @@ const HomeScreen = ({ navigation }) => {
                                 </View>
                             )}
                         </View>
-                        <View style={{ marginLeft: 12 }}>
+                        <View style={{ marginLeft: 12, flex: 1 }}>
                             <Text style={styles.greeting}>Paz y Bien 🕊️</Text>
                             <Text style={styles.userName}>{usuario?.nombre} {usuario?.apellido}</Text>
-                            <Text style={styles.userRole}>
-                                {usuario?.cargo !== 'ninguno' ? usuario?.cargo : usuario?.rol}
-                            </Text>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginTop: 3 }}>
+                                <Text style={styles.userRole}>
+                                    {usuario?.cargo !== 'ninguno' && usuario?.cargo ? usuario?.cargo : usuario?.rol}
+                                </Text>
+                                <View style={styles.fratBadge}>
+                                    <Text style={styles.fratBadgeText}>
+                                        📍 {usuario?.fraternidadNombre || 'JUFRA Pomalca'}
+                                    </Text>
+                                </View>
+                            </View>
                         </View>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={logout} style={styles.logoutButton}>
@@ -282,6 +289,19 @@ const styles = StyleSheet.create({
         fontSize: FONT_SIZES.md,
         color: 'rgba(255, 255, 255, 0.85)',
         textTransform: 'capitalize',
+    },
+    fratBadge: {
+        backgroundColor: 'rgba(255, 255, 255, 0.22)',
+        paddingHorizontal: 8,
+        paddingVertical: 2,
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.35)',
+    },
+    fratBadgeText: {
+        fontSize: FONT_SIZES.xs,
+        color: COLORS.white,
+        fontWeight: 'bold',
     },
     profileImageSmallContainer: {
         width: 50,

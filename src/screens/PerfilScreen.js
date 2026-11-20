@@ -165,6 +165,15 @@ const PerfilScreen = ({ navigation }) => {
                         <Text style={styles.sectionTitle}>Vida en Fraternidad</Text>
 
                         <View style={styles.infoRow}>
+                            <Text style={styles.label}>Fraternidad:</Text>
+                            <Text style={[styles.value, { fontWeight: 'bold', color: COLORS.primary }]}>
+                                📍 {perfilData?.fraternidadNombre || 'JUFRA Pomalca'}
+                            </Text>
+                        </View>
+
+                        <View style={styles.divider} />
+
+                        <View style={styles.infoRow}>
                             <Text style={styles.label}>Fecha de Ingreso:</Text>
                             <Text style={styles.value}>{formatDate(perfilData?.fechaIngreso)}</Text>
                         </View>

@@ -17,12 +17,12 @@ import { es } from 'date-fns/locale';
 import Card from '../components/Card';
 
 const ActasScreen = ({ navigation }) => {
-    const { usuario } = useAuth();
+    const { usuario, esConsejoReal } = useAuth();
     const [actas, setActas] = useState([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
 
-    const esConsejo = usuario && ['coordinador', 'vice-coordinador', 'secretario', 'tesorero', 'formador', 'admin'].includes(usuario.cargo);
+    const esConsejo = esConsejoReal;
 
     useEffect(() => {
         cargarActas();

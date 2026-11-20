@@ -28,13 +28,13 @@ const getSafeImageUrl = (url) => {
 };
 
 const AsistenciaScreen = ({ navigation }) => {
-    const { usuario } = useAuth();
+    const { usuario, esConsejoReal } = useAuth();
     const [estadisticas, setEstadisticas] = useState(null);
     const [historial, setHistorial] = useState([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
 
-    const esConsejo = usuario && ['coordinador', 'vice-coordinador', 'secretario', 'tesorero', 'formador', 'admin'].includes(usuario.cargo);
+    const esConsejo = esConsejoReal;
 
     useEffect(() => {
         cargarDatos();
