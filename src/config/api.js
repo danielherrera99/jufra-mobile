@@ -7,7 +7,7 @@ import Constants from 'expo-constants';
 // Función para obtener la URL base
 const getBaseUrl = () => {
     // Usar variable de entorno si existe, de lo contrario usar producción por defecto
-    return process.env.EXPO_PUBLIC_API_URL || 'https://api-jufra.onrender.com/api';
+    return process.env.EXPO_PUBLIC_API_URL || 'https://jufra-backend.vercel.app/api';
 };
 
 export const API_URL = getBaseUrl();
