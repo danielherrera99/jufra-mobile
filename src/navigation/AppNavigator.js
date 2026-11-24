@@ -66,6 +66,7 @@ import NovedadesScreen from '../screens/NovedadesScreen';
 import VidaFraternaScreen from '../screens/VidaFraternaScreen';
 import FinanzasScreen from '../screens/FinanzasScreen';
 import RegistrosMascotasAdminScreen from '../screens/RegistrosMascotasAdminScreen';
+import InventarioScreen from '../screens/InventarioScreen';
 
 import { COLORS } from '../constants/theme';
 
@@ -160,6 +161,7 @@ const AppNavigator = () => {
                     <Stack.Screen name="Comunicacion" component={ComunicacionScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="Solicitudes" component={SolicitudesScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="RegistrosMascotasAdmin" component={RegistrosMascotasAdminScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="Inventario" component={InventarioScreen} options={{ headerShown: false }} />
                 </Stack.Navigator>
             )}
         </NavigationContainer>

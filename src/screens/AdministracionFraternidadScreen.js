@@ -6,7 +6,8 @@ import { useAuth } from '../context/AuthContext';
 const AdministracionFraternidadScreen = ({ navigation }) => {
     const { usuario } = useAuth();
     
-    // Solo consejo puede entrar, aunque ya se valida en Home
+    // Solo administradores pueden ver el inventario
+    const esAdmin = ['admin', 'superadmin', 'admin_nacional'].includes(usuario?.rol);
     
     const menuItems = [
         {
@@ -32,7 +33,15 @@ const AdministracionFraternidadScreen = ({ navigation }) => {
             descripcion: 'Tesorería',
             color: '#4CAF50',
             screen: 'Finanzas',
-        }
+        },
+        ...(esAdmin ? [{
+            id: 'inventario',
+            titulo: 'Inventario',
+            icono: '📦',
+            descripcion: 'Equipos y Préstamos',
+            color: '#D97706',
+            screen: 'Inventario',
+        }] : [])
     ];
 
     return (
