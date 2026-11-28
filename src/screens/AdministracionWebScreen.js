@@ -1,20 +1,63 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking, Alert } from 'react-native';
 import { COLORS, SPACING, FONT_SIZES, BORDER_RADIUS } from '../constants/theme';
 import { useAuth } from '../context/AuthContext';
 
+const POMALCA_ID = '00000000-6a0f-b53a-d327-e42a6db2faf7';
+
 const AdministracionWebScreen = ({ navigation }) => {
     const { usuario } = useAuth();
+
+    const isPomalca = (usuario?.fraternidadId === POMALCA_ID) || 
+      (!usuario?.fraternidadId) ||
+      (usuario?.fraternidadNombre && usuario.fraternidadNombre.toUpperCase().includes('POMALCA'));
     
     const menuItems = [
-        {
-            id: 'solicitudes',
-            titulo: 'Solicitudes Web',
-            icono: '🙋',
-            descripcion: 'Prospectos de la página web',
-            color: '#E91E63',
-            screen: 'Solicitudes',
-        },
+        ...(isPomalca ? [
+            {
+                id: 'solicitudes',
+                titulo: 'Solicitudes Web',
+                icono: '🙋',
+                descripcion: 'Prospectos de la página web',
+                color: '#E91E63',
+                screen: 'Solicitudes',
+            },
+            {
+                id: 'redesSociales',
+                titulo: 'Impacto Digital',
+                icono: '📱', 
+                descripcion: 'Métricas de Redes',
+                color: '#1DA1F2', // Twitter Blue / Redes
+                screen: 'RedesSociales',
+            },
+            {
+                id: 'registrosMascotas',
+                titulo: 'Mascotas',
+                icono: '🐶',
+                descripcion: 'Bendición de Mascotas',
+                color: '#FF9800',
+                screen: 'RegistrosMascotasAdmin',
+            }
+        ] : [
+            {
+                id: 'miPortalWeb',
+                titulo: 'Mi Portal Web',
+                icono: '🌐',
+                descripcion: 'Ver y compartir portal de mi sede',
+                color: '#EA580C',
+                action: () => {
+                    const slug = (usuario?.fraternidadNombre || 'fraternidad')
+                        .toLowerCase()
+                        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                        .replace(/[^a-z0-9]+/g, '-')
+                        .replace(/^-+|-+$/g, '');
+                    const url = `https://jufrapomalca.vercel.app/f/${slug}`;
+                    Linking.openURL(url).catch(() => {
+                        Alert.alert('Error', 'No se pudo abrir el navegador');
+                    });
+                }
+            }
+        ]),
         {
             id: 'comunicacion',
             titulo: 'Comunicación',
@@ -24,28 +67,12 @@ const AdministracionWebScreen = ({ navigation }) => {
             screen: 'Comunicacion',
         },
         {
-            id: 'redesSociales',
-            titulo: 'Impacto Digital',
-            icono: '📱', 
-            descripcion: 'Métricas de Redes',
-            color: '#1DA1F2', // Twitter Blue / Redes
-            screen: 'RedesSociales',
-        },
-        {
             id: 'asistenteIA',
             titulo: 'Asistente IA',
             icono: '🤖', 
             descripcion: 'Inteligencia Artificial',
             color: '#009688', // Teal
             screen: 'AsistenteIA',
-        },
-        {
-            id: 'registrosMascotas',
-            titulo: 'Mascotas',
-            icono: '🐶',
-            descripcion: 'Bendición de Mascotas',
-            color: '#FF9800',
-            screen: 'RegistrosMascotasAdmin',
         }
     ];
 
@@ -64,7 +91,7 @@ const AdministracionWebScreen = ({ navigation }) => {
                         <TouchableOpacity
                             key={item.id}
                             style={[styles.menuItem, { backgroundColor: item.color + '1A', borderColor: item.color }]}
-                            onPress={() => navigation.navigate(item.screen)}
+                            onPress={() => item.action ? item.action() : navigation.navigate(item.screen)}
                         >
                             <View style={[styles.iconContainer, { backgroundColor: item.color }]}>
                                 <Text style={styles.iconText}>{item.icono}</Text>
