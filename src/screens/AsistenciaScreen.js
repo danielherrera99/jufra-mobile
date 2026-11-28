@@ -8,6 +8,7 @@ import {
     Image,
     Alert,
     RefreshControl,
+    Linking,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuth } from '../context/AuthContext';
@@ -33,8 +34,31 @@ const AsistenciaScreen = ({ navigation }) => {
     const [historial, setHistorial] = useState([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
+    const [walletLoading, setWalletLoading] = useState(false);
 
     const esConsejo = esConsejoReal;
+
+    const handleGoogleWallet = async () => {
+        setWalletLoading(true);
+        try {
+            const response = await api.get('/auth/wallet-pass');
+            if (response.data?.isConfigured && response.data?.saveUrl) {
+                Linking.openURL(response.data.saveUrl).catch(() => {
+                    Alert.alert('Google Wallet', 'No se pudo abrir el enlace en Google Wallet.');
+                });
+            } else {
+                Alert.alert(
+                    '📱 Google Wallet Pass (JUFRA)',
+                    `¡Paz y Bien, hermano(a) ${usuario?.nombre || ''}!\n\nTu carnet digital con TAU franciscana, QR de asistencia y geofencing para tu parroquia está configurado.\n\nPara activarlo en vivo en la aplicación Google Wallet de tu celular, el administrador nacional debe añadir las credenciales de Google Cloud en el servidor.`,
+                    [{ text: 'Entendido' }]
+                );
+            }
+        } catch (err) {
+            Alert.alert('Google Wallet', 'No se pudo conectar con el servicio de credenciales en este momento.');
+        } finally {
+            setWalletLoading(false);
+        }
+    };
 
     useEffect(() => {
         cargarDatos();
@@ -86,6 +110,18 @@ const AsistenciaScreen = ({ navigation }) => {
                 <Text style={styles.qrInstructions}>
                     Muestra este código al secretario para registrar tu asistencia.
                 </Text>
+
+                <TouchableOpacity
+                    style={styles.walletButton}
+                    onPress={handleGoogleWallet}
+                    disabled={walletLoading}
+                    activeOpacity={0.8}
+                >
+                    <Text style={styles.walletIcon}>💳</Text>
+                    <Text style={styles.walletText}>
+                        {walletLoading ? 'Generando pase...' : 'Añadir a Google Wallet'}
+                    </Text>
+                </TouchableOpacity>
             </Card>
 
             {/* Estadísticas */}
@@ -360,6 +396,26 @@ const styles = StyleSheet.create({
         color: COLORS.gray,
         marginTop: SPACING.lg,
         fontStyle: 'italic',
+    },
+    walletButton: {
+        backgroundColor: '#1E293B',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 12,
+        paddingHorizontal: 20,
+        borderRadius: BORDER_RADIUS.xl,
+        marginTop: SPACING.md,
+        gap: 8,
+        ...SHADOWS.small,
+    },
+    walletIcon: {
+        fontSize: 18,
+    },
+    walletText: {
+        color: '#FFFFFF',
+        fontSize: FONT_SIZES.md,
+        fontWeight: 'bold',
     },
 });
 
